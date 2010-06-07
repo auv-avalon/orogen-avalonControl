@@ -17,5 +17,5 @@ INSTALL(TARGETS ${AVALON_CONTROL_TASKLIB_NAME}
     LIBRARY DESTINATION lib/orocos)
 
 INSTALL(FILES ${AVALON_CONTROL_TASKLIB_HEADERS}
-    DESTINATION include/orocos/avalon_motion_controller)
+    DESTINATION include/orocos/avalon_control)
 
