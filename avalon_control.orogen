@@ -1,0 +1,80 @@
+name "avalon_control"
+version "0.1"
+
+import_types_from "base"
+import_types_from 'motcon_controller'
+
+import_types_from "AvalonControl.hpp"
+
+using_library 'avalontools'
+
+task_context 'MotionControlTask' do
+    property 'heading_pid', '/motor_controller/PIDSettings'
+    property 'z_pid',   '/motor_controller/PIDSettings'
+
+    input_port('pose_readings', '/wrappers/samples/RigidBodyState').
+        doc("the current pose estimate").
+        needs_buffered_connection
+
+    input_port('motion_command', '/avalon_control/MotionCommand').
+        doc("the input commands").
+        needs_data_connection
+
+    # The speed commands
+    output_port "speed_commands", "/avalon_control/SpeedCommand"
+
+    # The internal state of the controller
+    output_port 'debug', '/avalon_control/MotionControllerState'
+
+    port_driven :pose_readings
+end
+
+# Speed control on Avalon is using all 6 thrusters
+#
+#  - the depth control is using both middle and rear vertical thrusters. A PID
+#    controller generates the value for the middle thruster, and then the
+#    depth_mb_ratio value is applied to generate the value for the rear
+#    thruster.
+#  - the pitch control is using the rear vertical thruster
+#  - the striving control is using the middle and rear horizontal thruster. It
+#    is open loop, and therefore only uses a linear mapping between the
+#    commands in m/s and the actual thruster values.
+#  - the heading control is using the rear horizontal thruster
+#  - the forward speed control is an open-loop control that maps command in m/s
+#    to the actual thruster values for left and right horizontal thrusters
+task_context 'SpeedControlTask' do
+    # PID settings for the depth controller. Generates values for the middle
+    # vertical thruster
+    property('z_pid', '/motor_controller/PIDSettings')
+    # Factor applied to the PWM value generated for the middle vertical thruster
+    # for depth control to generate the corresponding part for the rear thruster
+    property('z_coupling_factor', 'double', 0)
+
+    # PID settings for the pitch controller. Generates values for the rear
+    # thruster
+    property('pitch_pid', '/motor_controller/PIDSettings')
+
+    # Factor applied to commands in m/s to compute the PWM for middle thruster
+    property('y_factor', 'double', 0)
+    # Factor applied to the PWM for the middle horizontal thruster to get the
+    # corresponding part for the rear horizontal thruster
+    property('y_coupling_factor', 'double', 0)
+
+    # PID settings for the heading controller. Generates values for the rear
+    # thruster
+    property('heading_pid', '/motor_controller/PIDSettings')
+
+    # Factor applied to commands in m/s to compute the PWM for left and right
+    # thrusters
+    property('x_factor', 'double', 0)
+
+    input_port('pose_samples', '/wrappers/samples/RigidBodyState').
+        needs_data_connection
+    input_port('speed_command', '/avalon_control/SpeedCommand').
+        needs_data_connection
+
+    output_port("motor_commands", "/controlData/Motcon")
+    output_port('debug', '/avalon_control/SpeedControllerState')
+    port_driven
+end
+
