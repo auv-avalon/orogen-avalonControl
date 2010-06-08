@@ -30,12 +30,22 @@ namespace avalon_control
 {
     enum MOTCON_CHANNELS
     {
-        MIDDLE_HORIZONTAL = 0,
+        MIDDLE_HORIZONTAL = 4,
         MIDDLE_VERTICAL   = 1,
-        REAR_HORIZONTAL   = 2,
-        REAR_VERTICAL     = 3,
-        RIGHT = 4,
-        LEFT  = 5
+        REAR_HORIZONTAL   = 0,
+        REAR_VERTICAL     = 5,
+        RIGHT = 2,
+        LEFT  = 3
+    };
+
+    enum MOTCON_CHANNEL_DIRECTIONS
+    {
+        DIR_MIDDLE_HORIZONTAL = -1,
+        DIR_MIDDLE_VERTICAL   =  1,
+        DIR_REAR_HORIZONTAL   = -1,
+        DIR_REAR_VERTICAL     = -1,
+        DIR_RIGHT = -1,
+        DIR_LEFT  = -1
     };
 
     struct MotionControllerState

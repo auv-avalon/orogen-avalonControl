@@ -92,12 +92,12 @@ void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& update
     controlData::Motcon motor_commands;
 
     double values[6];
-    values[MIDDLE_VERTICAL]   = middle_vertical;
-    values[MIDDLE_HORIZONTAL] = middle_horizontal;
-    values[REAR_VERTICAL]     = rear_vertical;
-    values[REAR_HORIZONTAL]   = rear_horizontal;
-    values[LEFT]              = left;
-    values[RIGHT]             = right;
+    values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * middle_vertical;
+    values[MIDDLE_HORIZONTAL] = DIR_MIDDLE_HORIZONTAL * middle_horizontal;
+    values[REAR_VERTICAL]     = DIR_REAR_VERTICAL     * rear_vertical;
+    values[REAR_HORIZONTAL]   = DIR_REAR_HORIZONTAL   * rear_horizontal;
+    values[LEFT]              = DIR_LEFT              * left;
+    values[RIGHT]             = DIR_RIGHT             * right;
 
     for (int i = 0; i < 6; ++i)
     {
