@@ -38,7 +38,7 @@ void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& update
     updatePIDSettings(*headingPID, current_heading_pid, _heading_pid.get());
 
     avalon_control::SpeedCommand command;
-    if (! _speed_command.read(command))
+    if (! _speed_commands.read(command))
         return; // no current command
 
     wrappers::samples::RigidBodyState pose_wrapper;

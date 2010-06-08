@@ -34,7 +34,7 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     updatePIDSettings(*headingPID, current_heading_pid, _heading_pid.get());
 
     avalon_control::MotionCommand command;
-    if (!_motion_command.read(command))
+    if (!_motion_commands.read(command))
         return;
 
     if (fabs(command.heading) > M_PI)

@@ -16,7 +16,7 @@ task_context 'MotionControlTask' do
         doc("the current pose estimate").
         needs_buffered_connection
 
-    input_port('motion_command', '/avalon_control/MotionCommand').
+    input_port('motion_commands', '/avalon_control/MotionCommand').
         doc("the input commands").
         needs_data_connection
 
@@ -70,11 +70,19 @@ task_context 'SpeedControlTask' do
 
     input_port('pose_samples', '/wrappers/samples/RigidBodyState').
         needs_data_connection
-    input_port('speed_command', '/avalon_control/SpeedCommand').
+    input_port('speed_commands', '/avalon_control/SpeedCommand').
         needs_data_connection
 
     output_port("motor_commands", "/controlData/Motcon")
     output_port('debug', '/avalon_control/SpeedControllerState')
     port_driven
 end
+
+deployment 'test_avalon_control' do
+    do_not_install
+
+    task 'motion_control', 'avalon_control::MotionControlTask'
+    task 'speed_control',  'avalon_control::SpeedControlTask'
+end
+
 
