@@ -12,7 +12,7 @@ task_context 'MotionControlTask' do
     property 'heading_pid', '/motor_controller/PIDSettings'
     property 'z_pid',   '/motor_controller/PIDSettings'
 
-    input_port('pose_readings', '/wrappers/samples/RigidBodyState').
+    input_port('pose_samples', '/wrappers/samples/RigidBodyState').
         doc("the current pose estimate").
         needs_buffered_connection
 
@@ -26,7 +26,7 @@ task_context 'MotionControlTask' do
     # The internal state of the controller
     output_port 'debug', '/avalon_control/MotionControllerState'
 
-    port_driven :pose_readings
+    port_driven :pose_samples
 end
 
 # Speed control on Avalon is using all 6 thrusters

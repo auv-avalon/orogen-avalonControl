@@ -41,7 +41,7 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
         command.heading = fmod(command.heading + M_PI, 2 * M_PI) - M_PI;
 
     wrappers::samples::RigidBodyState pose_wrapper;
-    if (!_pose_readings.read(pose_wrapper))
+    if (!_pose_samples.read(pose_wrapper))
         return;
     base::samples::RigidBodyState pose(pose_wrapper);
 
