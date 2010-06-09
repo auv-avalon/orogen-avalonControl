@@ -12,7 +12,6 @@ using namespace avalon_control;
 
 SpeedControlTask::SpeedControlTask(std::string const& name, TaskCore::TaskState initial_state)
     : SpeedControlTaskBase(name, initial_state)
-    , zPID(new PIDController())
     , headingPID(new PIDController())
     , pitchPID(new PIDController())
 {
@@ -34,9 +33,9 @@ SpeedControlTask::SpeedControlTask(std::string const& name, TaskCore::TaskState 
 // }
 bool SpeedControlTask::startHook()
 {
-    zPID->reset();
     pitchPID->reset();
     headingPID->reset();
+
     pitchPID->setSetpoint(0);
     return true;
 }
@@ -52,7 +51,6 @@ static double correct_pwm_value(double value, double dead_zone)
 
 void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
 {
-    updatePIDSettings(*zPID,       current_z_pid,       _z_pid.get());
     updatePIDSettings(*pitchPID,   current_pitch_pid,   _pitch_pid.get());
     updatePIDSettings(*headingPID, current_heading_pid, _heading_pid.get());
 
@@ -73,7 +71,6 @@ void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& update
     }
 
     // Update the PIDs with the set points
-    zPID->setSetpoint(command.linear_speeds[2]);
     headingPID->setSetpoint(command.rotation_speed);
     pitchPID->setSetpoint(0);
 
@@ -82,7 +79,7 @@ void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& update
             Avalonmath::vectorToAngleAxis(pose.angular_velocity));
     double delta_t = (pose.time - last_pose.time).toSeconds();
 
-    double middle_vertical = zPID->control(pose.velocity.z(), delta_t);
+    double middle_vertical = SPEED_TO_PWM * command.linear_speeds[2];
     double rear_horizontal = headingPID->control(euler_speeds.x(), delta_t);
     double rear_vertical   = pitchPID->control(euler_speeds.y(), delta_t);
 
@@ -137,7 +134,6 @@ void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& update
 
     // Now export the internal controller states
     avalon_control::SpeedControllerState state;
-    state.z_pid = zPID->getState();
     state.heading_pid = headingPID->getState();
     state.pitch_pid = pitchPID->getState();
     _debug.write(state);
