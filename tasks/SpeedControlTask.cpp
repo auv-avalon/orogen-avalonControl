@@ -3,6 +3,10 @@
 #include "tasks/PIDSettingsUpdate.hpp"
 #include <avalonmath.h>
 
+// Indentified values. Seee                                                                                                                                                        
+//   AUV10/experiments/20100609_controller_calibration                                                                                                                             
+// for the raw data                                                                                                                                                                
+static const double SPEED_TO_PWM = 1.0 / 0.1122;                                                                                                                                   
 
 using namespace avalon_control;
 
@@ -35,6 +39,15 @@ bool SpeedControlTask::startHook()
     headingPID->reset();
     pitchPID->setSetpoint(0);
     return true;
+}
+
+static double correct_pwm_value(double value, double dead_zone)
+{
+    if (value > 0)
+        return  dead_zone + (value * (1 - dead_zone));
+    else if (value < 0)
+        return -dead_zone + (value * (1 - dead_zone));
+    else return value;
 }
 
 void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
@@ -97,6 +110,14 @@ void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& update
 
     // And finally convert all the values into the motcon commands
     controlData::Motcon motor_commands;
+
+    // Apply correction factor from PWM-to-force response curve
+    middle_vertical   = correct_pwm_value(middle_vertical, 0.14);
+    middle_horizontal = correct_pwm_value(middle_horizontal, 0.14);
+    rear_vertical     = correct_pwm_value(rear_vertical, 0.24);
+    rear_horizontal   = correct_pwm_value(rear_horizontal, 0.14);
+    left              = correct_pwm_value(left, 0.14);
+    right             = correct_pwm_value(right, 0.14);
 
     double values[6];
     values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * middle_vertical;
