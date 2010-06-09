@@ -76,6 +76,7 @@ void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& update
     double middle_horizontal = _y_factor.get() * pose.velocity.y();
     double left  = _x_factor.get() * pose.velocity.x();
     double right = left;
+    last_pose = pose;
 
     // Now take into account couplings
     rear_vertical   += middle_vertical   * _z_coupling_factor.get();
