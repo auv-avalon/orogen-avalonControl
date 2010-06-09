@@ -8,8 +8,16 @@ using namespace avalon_control;
 MotionControlTask::MotionControlTask(std::string const& name, TaskCore::TaskState initial_state)
     : MotionControlTaskBase(name, initial_state)
 {
-    zPID = new PIDController();
+    zPID       = new PIDController();
     headingPID = new PIDController();
+    pitchPID   = new PIDController();
+
+    motor_controller::PIDSettings default_settings;
+    default_settings.min = -1;
+    default_settings.max = 1;
+    _z_pid.set(default_settings);
+    _pitch_pid.set(default_settings);
+    _heading_pid.set(default_settings);
 }
 
 /// The following lines are template definitions for the various state machine
@@ -23,22 +31,28 @@ MotionControlTask::MotionControlTask(std::string const& name, TaskCore::TaskStat
 
 bool MotionControlTask::startHook()
 {
+    last_pose.invalidate();
+    last_pose.time = base::Time();
     zPID->reset();
     headingPID->reset();
+    pitchPID->reset();
     return true;
+}
+
+static double correct_pwm_value(double value, double dead_zone)
+{
+    if (value > 0)
+        return  dead_zone + (value * (1 - dead_zone));
+    else if (value < 0)
+        return -dead_zone + (value * (1 - dead_zone));
+    else return value;
 }
 
 void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
 {
     updatePIDSettings(*zPID,   current_z_pid,   _z_pid.get());
     updatePIDSettings(*headingPID, current_heading_pid, _heading_pid.get());
-
-    avalon_control::MotionCommand command;
-    if (!_motion_commands.read(command))
-        return;
-
-    if (fabs(command.heading) > M_PI)
-        command.heading = fmod(command.heading + M_PI, 2 * M_PI) - M_PI;
+    updatePIDSettings(*pitchPID, current_pitch_pid, _pitch_pid.get());
 
     wrappers::samples::RigidBodyState pose_wrapper;
     if (!_pose_samples.read(pose_wrapper))
@@ -56,9 +70,20 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     if (time_step == 0)
         return;
 
+    last_pose = pose;
+
+
+    avalon_control::MotionCommand command;
+    if (!_motion_commands.read(command))
+        return;
+
+    if (fabs(command.heading) > M_PI)
+        command.heading = fmod(command.heading + M_PI, 2 * M_PI) - M_PI;
+
     // Update the PID controllers with the actual commands
     zPID->setSetpoint(command.z);
     headingPID->setSetpoint(command.heading);
+    pitchPID->setSetpoint(0);
 
     // Now update the sensor readings. Wrap the heading at PI/-PI if needed, to
     // match the given command.
@@ -72,24 +97,65 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     else if (current_heading - command.heading < -M_PI)
         current_heading += 2*M_PI;
 
-    double z_speed        = zPID->control(current_z, time_step);
-    double rotation_speed = headingPID->control(current_heading, time_step);
+    double middle_vertical = zPID->control(current_z, time_step);
+    double rear_horizontal = headingPID->control(current_heading, time_step);
+    double rear_vertical   = pitchPID->control(current_pitch, time_step);
 
-    avalon_control::SpeedCommand speed_command;
-    speed_command.time = base::Time::now();
-    speed_command.linear_speeds[0] = command.x_speed;
-    speed_command.linear_speeds[1] = command.y_speed;
-    speed_command.linear_speeds[2] = z_speed;
-    speed_command.rotation_speed = rotation_speed;
-    _speed_commands.write(speed_command);
+    double middle_horizontal = _y_factor.get() * pose.velocity.y();
+    double left  = _x_factor.get() * pose.velocity.x();
+    if (left < -1.0) left = 1.0;
+    else if (left > 1.0) left = 1.0;
+    double right = left;
 
+    // Now take into account couplings
+    rear_vertical   += middle_vertical   * _z_coupling_factor.get();
+    rear_horizontal += middle_horizontal * _y_coupling_factor.get();
+
+    // Take into account the saturations due to . Namely, we prefer heading to
+    // striving and pitch to depth. This is VERY crude.
+    if (fabs(rear_vertical) > 1.0)
+    {
+        middle_vertical /= fabs(rear_vertical);
+        rear_vertical   /= fabs(rear_vertical);
+    }
+    if (fabs(rear_horizontal) > 1.0)
+    {
+        middle_horizontal /= fabs(rear_horizontal);
+        rear_horizontal   /= fabs(rear_horizontal);
+    }
+
+    // And finally convert all the values into the motcon commands
+    controlData::Motcon motor_commands;
+
+    // Apply correction factor from PWM-to-force response curve
+    middle_vertical   = correct_pwm_value(middle_vertical, 0.14);
+    middle_horizontal = correct_pwm_value(middle_horizontal, 0.14);
+    rear_vertical     = correct_pwm_value(rear_vertical, 0.20);
+    rear_horizontal   = correct_pwm_value(rear_horizontal, 0.14);
+    left              = correct_pwm_value(left, 0.14);
+    right             = correct_pwm_value(right, 0.14);
+
+    double values[6];
+    values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * middle_vertical;
+    values[MIDDLE_HORIZONTAL] = DIR_MIDDLE_HORIZONTAL * middle_horizontal;
+    values[REAR_VERTICAL]     = DIR_REAR_VERTICAL     * rear_vertical;
+    values[REAR_HORIZONTAL]   = DIR_REAR_HORIZONTAL   * rear_horizontal;
+    values[LEFT]              = DIR_LEFT              * left;
+    values[RIGHT]             = DIR_RIGHT             * right;
+
+    for (int i = 0; i < 6; ++i)
+    {
+        motor_commands.isChanSet[i] = true;
+        motor_commands.channels[i] = rint(values[i] * 255);
+    }
+    motor_commands.stamp = base::Time::now();
+    _motor_commands.write(motor_commands);
 
     avalon_control::MotionControllerState state;
-    state.z_pid = zPID->getState();
+    state.z_pid       = zPID->getState();
     state.heading_pid = headingPID->getState();
+    state.pitch_pid   = pitchPID->getState();
     _debug.write(state);
-
-    last_pose = pose;
 }
 
 // void MotionControlTask::errorHook()

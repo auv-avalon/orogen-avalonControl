@@ -16,11 +16,15 @@ namespace avalon_control {
         motor_controller::PIDSettings current_z_pid;
         /** Current PID settings for the heading controller */
         motor_controller::PIDSettings current_heading_pid;
+        /** Current PID settings for the heading controller */
+        motor_controller::PIDSettings current_pitch_pid;
 
         /** PID controller on the Z axis */
         PIDController* zPID;
         /** PID controller on the heading */
         PIDController* headingPID;
+        /** PID controller on the heading */
+        PIDController* pitchPID;
 
         /** The pose at the last update */
         base::samples::RigidBodyState last_pose;

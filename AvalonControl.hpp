@@ -52,6 +52,7 @@ namespace avalon_control
     {
         PIDControllerState z_pid;
         PIDControllerState heading_pid;
+        PIDControllerState pitch_pid;
     };
 
     struct SpeedControllerState
