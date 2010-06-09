@@ -12,6 +12,12 @@ SpeedControlTask::SpeedControlTask(std::string const& name, TaskCore::TaskState 
     , headingPID(new PIDController())
     , pitchPID(new PIDController())
 {
+    motor_controller::PIDSettings default_settings;
+    default_settings.min = -1;
+    default_settings.max = 1;
+    _z_pid.set(default_settings);
+    _pitch_pid.set(default_settings);
+    _heading_pid.set(default_settings);
 }
 
 /// The following lines are template definitions for the various state machine
