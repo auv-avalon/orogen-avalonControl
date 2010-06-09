@@ -75,7 +75,7 @@ task_context 'SpeedControlTask' do
 
     output_port("motor_commands", "/controlData/Motcon")
     output_port('debug', '/avalon_control/SpeedControllerState')
-    port_driven
+    port_driven :pose_samples
 end
 
 deployment 'test_avalon_control' do
