@@ -38,7 +38,7 @@ task_context 'MotionControlTask' do
         doc("the current pose estimate").
         needs_buffered_connection
 
-    input_port('motion_commands', '/avalon_control/MotionCommand').
+    input_port('motion_commands', '/base/AUVMotionCommand').
         doc("the input commands").
         needs_data_connection
 

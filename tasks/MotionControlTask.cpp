@@ -73,7 +73,7 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     last_pose = pose;
 
 
-    avalon_control::MotionCommand command;
+    base::AUVMotionCommand command;
     if (!_motion_commands.read(command))
         return;
 
