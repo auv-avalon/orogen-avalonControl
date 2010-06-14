@@ -80,6 +80,7 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     if (fabs(command.heading) > M_PI)
         command.heading = fmod(command.heading + M_PI, 2 * M_PI) - M_PI;
 
+//	printf("Target Heading: %f  X,Y,Z: %f,%f,%f\n",command.heading,command.x_speed,command.y_speed,command.z);
     // Update the PID controllers with the actual commands
     zPID->setSetpoint(command.z);
     headingPID->setSetpoint(command.heading);
@@ -101,8 +102,8 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     double rear_horizontal = headingPID->control(current_heading, time_step);
     double rear_vertical   = pitchPID->control(current_pitch, time_step);
 
-    double middle_horizontal = _y_factor.get() * pose.velocity.y();
-    double left  = _x_factor.get() * pose.velocity.x();
+    double middle_horizontal = _y_factor.get() * command.y_speed; //pose.velocity.y();
+    double left  = _x_factor.get() * command.x_speed;//pose.velocity.x();
     if (left < -1.0) left = 1.0;
     else if (left > 1.0) left = 1.0;
     double right = left;
@@ -143,11 +144,14 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     values[LEFT]              = DIR_LEFT              * left;
     values[RIGHT]             = DIR_RIGHT             * right;
 
+//	printf("Motor Values: ");
     for (int i = 0; i < 6; ++i)
     {
         motor_commands.isChanSet[i] = true;
         motor_commands.channels[i] = rint(values[i] * 255);
+//	printf(" %f",values[i]);
     }
+//    printf("\n");
     motor_commands.stamp = base::Time::now();
     _motor_commands.write(motor_commands);
 
