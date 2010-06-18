@@ -116,7 +116,7 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
 
     // Now take into account couplings
     rear_vertical   += middle_vertical   * _z_coupling_factor.get();
-    rear_horizontal += middle_horizontal * _y_coupling_factor.get();
+    rear_horizontal -= middle_horizontal * _y_coupling_factor.get();
 
     // Take into account the saturations due to . Namely, we prefer heading to
     // striving and pitch to depth. This is VERY crude.
