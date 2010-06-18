@@ -135,12 +135,12 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     controlData::Motcon motor_commands;
 
     // Apply correction factor from PWM-to-force response curve
-    middle_vertical   = correct_pwm_value(middle_vertical, 0.11);
-    middle_horizontal = correct_pwm_value(middle_horizontal, 0.11);
-    rear_vertical     = correct_pwm_value(rear_vertical, 0.15);
-    rear_horizontal   = correct_pwm_value(rear_horizontal, 0.11);
-    left              = correct_pwm_value(left, 0.11);
-    right             = correct_pwm_value(right, 0.11);
+    middle_vertical   = correct_pwm_value(middle_vertical, 0.14);
+    middle_horizontal = correct_pwm_value(middle_horizontal, 0.14);
+    rear_vertical     = correct_pwm_value(rear_vertical, 0.20);
+    rear_horizontal   = correct_pwm_value(rear_horizontal, 0.14);
+    left              = correct_pwm_value(left, 0.14);
+    right             = correct_pwm_value(right, 0.14);
 
     double values[6];
     values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * middle_vertical;
@@ -154,7 +154,7 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     for (int i = 0; i < 6; ++i)
     {
         motor_commands.isChanSet[i] = true;
-        motor_commands.channels[i] = rint(values[i] * 200);
+        motor_commands.channels[i] = rint(values[i] * 255);
 //	printf(" %f",values[i]);
     }
 //    printf("\n");
