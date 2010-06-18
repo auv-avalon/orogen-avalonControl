@@ -36,6 +36,7 @@ bool MotionControlTask::startHook()
     zPID->reset();
     headingPID->reset();
     pitchPID->reset();
+    last_command_time = base::Time();
     return true;
 }
 
@@ -72,18 +73,23 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
 
     last_pose = pose;
 
+    if (!_motion_commands.read(last_command))
+    {
+    	if (last_command_time.isNull())
+	    return;
+    	if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get())
+	    return fatal();
+    }
+    else
+    	last_command_time = base::Time::now();
 
-    base::AUVMotionCommand command;
-    if (!_motion_commands.read(command))
-        return;
-
-    if (fabs(command.heading) > M_PI)
-        command.heading = fmod(command.heading + M_PI, 2 * M_PI) - M_PI;
+    if (fabs(last_command.heading) > M_PI)
+        last_command.heading = fmod(last_command.heading + M_PI, 2 * M_PI) - M_PI;
 
 //	printf("Target Heading: %f  X,Y,Z: %f,%f,%f\n",command.heading,command.x_speed,command.y_speed,command.z);
     // Update the PID controllers with the actual commands
-    zPID->setSetpoint(command.z);
-    headingPID->setSetpoint(command.heading);
+    zPID->setSetpoint(last_command.z);
+    headingPID->setSetpoint(last_command.heading);
     pitchPID->setSetpoint(0);
 
     // Now update the sensor readings. Wrap the heading at PI/-PI if needed, to
@@ -93,17 +99,17 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     Avalonmath::quaternionToEuler(pose.orientation,
             current_heading, current_pitch, current_roll);
 
-    if (current_heading - command.heading > M_PI)
+    if (current_heading - last_command.heading > M_PI)
         current_heading -= 2*M_PI;
-    else if (current_heading - command.heading < -M_PI)
+    else if (current_heading - last_command.heading < -M_PI)
         current_heading += 2*M_PI;
 
     double middle_vertical = zPID->control(current_z, time_step);
     double rear_horizontal = headingPID->control(current_heading, time_step);
     double rear_vertical   = pitchPID->control(current_pitch, time_step);
 
-    double middle_horizontal = _y_factor.get() * command.y_speed; //pose.velocity.y();
-    double left  = _x_factor.get() * command.x_speed;//pose.velocity.x();
+    double middle_horizontal = _y_factor.get() * last_command.y_speed; //pose.velocity.y();
+    double left  = _x_factor.get() * last_command.x_speed;//pose.velocity.x();
     if (left < -1.0) left = 1.0;
     else if (left > 1.0) left = 1.0;
     double right = left;

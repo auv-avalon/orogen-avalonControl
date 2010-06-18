@@ -29,6 +29,11 @@ namespace avalon_control {
         /** The pose at the last update */
         base::samples::RigidBodyState last_pose;
 
+	/** Time of the last received command */
+	base::Time last_command_time;
+	/** Last received command */
+	base::AUVMotionCommand last_command;
+
     public:
         MotionControlTask(std::string const& name = "avalon_control::MotionControlTask", TaskCore::TaskState initial_state = Stopped);
 
