@@ -5,6 +5,7 @@ import_types_from "base"
 import_types_from 'motcon_controller'
 
 import_types_from "AvalonControl.hpp"
+type_export_policy :used
 
 using_library 'avalontools'
 
