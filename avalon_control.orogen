@@ -44,7 +44,7 @@ task_context 'MotionControlTask' do
 
     input_port('motion_commands', '/base/AUVMotionCommand').
         doc("the input commands").
-        needs_data_connection
+        needs_buffered_connection
 
     # The speed commands
     output_port("motor_commands", "/controlData/Motcon")
