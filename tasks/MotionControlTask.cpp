@@ -5,6 +5,14 @@
 
 using namespace avalon_control;
 
+static double constrain_angle(double value)
+{
+    if (value < 0)
+        return fmodf(value - M_PI, 2 * M_PI) + M_PI;
+    else
+        return fmodf(value + M_PI, 2 * M_PI) - M_PI;
+}
+
 MotionControlTask::MotionControlTask(std::string const& name, TaskCore::TaskState initial_state)
     : MotionControlTaskBase(name, initial_state)
 {
@@ -83,8 +91,7 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     else
     	last_command_time = base::Time::now();
 
-    if (fabs(last_command.heading) > M_PI)
-        last_command.heading = fmod(last_command.heading + M_PI, 2 * M_PI) - M_PI;
+    last_command.heading = constrain_angle(last_command.heading);
 
 //	printf("Target Heading: %f  X,Y,Z: %f,%f,%f\n",command.heading,command.x_speed,command.y_speed,command.z);
     // Update the PID controllers with the actual commands
