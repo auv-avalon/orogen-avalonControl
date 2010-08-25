@@ -107,6 +107,12 @@ void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& update
 
     // And finally convert all the values into the motcon commands
     controlData::Motcon motor_commands;
+		hbridge::SimpleCommand hbridgeCommands;
+		for(int i=0;i<HBRIGE_MAXIMUM_BOARDS;i++){
+			hbridgeCommands.mode[i] = DM_PWM;
+			hbridgeCommands.target[i] = 0;
+
+		}
 
     // Apply correction factor from PWM-to-force response curve
     middle_vertical   = correct_pwm_value(middle_vertical, 0.14);
@@ -128,9 +134,12 @@ void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& update
     {
         motor_commands.isChanSet[i] = true;
         motor_commands.channels[i] = rint(values[i] * 255);
+				hbridgeCommands.target[i] = values[i];
     }
     motor_commands.stamp = base::Time::now();
+		hbridgeCommands.time = base::Time::now();
     _motor_commands.write(motor_commands);
+		_hbridge_commands.write(hbridgeCommands);
 
     // Now export the internal controller states
     avalon_control::SpeedControllerState state;
