@@ -10,6 +10,28 @@ type_export_policy :used
 
 using_library 'avalontools'
 
+task_context 'PositionControlTask' do
+    property 'x_pid',   '/motor_controller/PIDSettings'
+    property 'y_pid',   '/motor_controller/PIDSettings'
+    
+    # Maximum duration between two commands, in seconds
+    property('timeout', 'double', 1)
+    
+    input_port('pose_samples', '/wrappers/samples/RigidBodyState').
+        doc("the current pose estimate").
+        needs_buffered_connection
+
+    input_port('position_commands', '/base/AUVPositionCommand').
+        doc("the input commands").
+        needs_buffered_connection
+
+    output_port('motion_commands', '/base/AUVMotionCommand').
+        doc("the output commands")
+#        needs_buffered_connection
+
+    port_driven :pose_samples
+end
+
 task_context 'MotionControlTask' do
     # PID settings for the depth controller. Generates values for the middle
     # vertical thruster
