@@ -163,15 +163,15 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
     values[LEFT]              = DIR_LEFT              * left;
     values[RIGHT]             = DIR_RIGHT             * right;
 
-//	printf("Motor Values: ");
+	//printf("Motor Values: ");
     for (int i = 0; i < 6; ++i)
     {
         motor_commands.isChanSet[i] = true;
         motor_commands.channels[i] = rint(values[i] * 255);
 				hbridgeCommands.target[i] = values[i];
-//	printf(" %f",values[i]);
+	//printf(" %f",values[i]);
     }
-//    printf("\n");
+    //printf("\n");
     motor_commands.stamp = base::Time::now();
 		hbridgeCommands.time = base::Time::now();
     _motor_commands.write(motor_commands);
