@@ -98,10 +98,10 @@ void PositionControlTask::updateHook(std::vector<RTT::PortInterface*> const& upd
     double xSpeed= xPID->control(local_delta[0], time_step);
     double ySpeed= yPID->control(local_delta[1], time_step);
 
-    printf("Current Pos: %1.3f,%1.3f,%1.3f ",last_pose.position[0],last_pose.position[1],last_pose.position[2]);
-    printf("Requested: %1.3f,%1.3f,%1.3f ",last_command.x,last_command.y,last_command.z);
-    printf("Delta Values: %1.3f,%1.3f,%1.3f ",local_delta[0],local_delta[1],local_delta[2]);
-    printf("Speed: %1.3f,%1.3f     \r",xSpeed,ySpeed);
+    //printf("Current Pos: %1.3f,%1.3f,%1.3f ",last_pose.position[0],last_pose.position[1],last_pose.position[2]);
+    //printf("Requested: %1.3f,%1.3f,%1.3f ",last_command.x,last_command.y,last_command.z);
+    //printf("Delta Values: %1.3f,%1.3f,%1.3f ",local_delta[0],local_delta[1],local_delta[2]);
+    //printf("Speed: %1.3f,%1.3f     \r",xSpeed,ySpeed);
 
     base::AUVMotionCommand motion_command;
     motion_command.heading = last_command.heading;
