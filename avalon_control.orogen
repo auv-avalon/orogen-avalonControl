@@ -2,7 +2,7 @@ name "avalon_control"
 version "0.1"
 
 import_types_from "base"
-import_types_from 'motcon_controller'
+#import_types_from 'motcon_controller'
 import_types_from "hbridge"
 
 import_types_from "AvalonControl.hpp"
@@ -70,7 +70,7 @@ task_context 'MotionControlTask' do
         needs_buffered_connection
 
     # The speed commands
-    output_port("motor_commands", "/controlData/Motcon")
+#    output_port("motor_commands", "/controlData/Motcon")
 
 		# The speed commands for HBridge
 		output_port("hbridge_commands","hbridge/SimpleCommand")
