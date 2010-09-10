@@ -85,9 +85,11 @@ void PositionControlTask::updateHook(std::vector<RTT::PortInterface*> const& upd
    
    //Get Delta position (aka error)
    Eigen::Vector3d pos_delta = last_pose.position - Eigen::Vector3d(last_command.x,last_command.y,last_command.z);
+   
+   pos_delta[2]=0;
 
    //Transform current error in position to avalon thruster coordinate system to get the real mistion position in local coordinates
-   Eigen::Vector3d local_delta =  pose.orientation.inverse() * pos_delta;
+   Eigen::Vector3d local_delta =  pose.orientation.conjugate() * pos_delta;
 
     xPID->setSetpoint(0);//local_delta[0]);
     yPID->setSetpoint(0);//local_delta[1]);
@@ -98,10 +100,11 @@ void PositionControlTask::updateHook(std::vector<RTT::PortInterface*> const& upd
     double xSpeed= xPID->control(local_delta[0], time_step);
     double ySpeed= yPID->control(local_delta[1], time_step);
 
-    //printf("Current Pos: %1.3f,%1.3f,%1.3f ",last_pose.position[0],last_pose.position[1],last_pose.position[2]);
-    //printf("Requested: %1.3f,%1.3f,%1.3f ",last_command.x,last_command.y,last_command.z);
-    //printf("Delta Values: %1.3f,%1.3f,%1.3f ",local_delta[0],local_delta[1],local_delta[2]);
-    //printf("Speed: %1.3f,%1.3f     \r",xSpeed,ySpeed);
+    printf("Current Heading: %2.2f,%2.2f,%2.2f,%2.2f",pose.orientation.w(),pose.orientation.x(),pose.orientation.y(),pose.orientation.z());
+    printf("Current Pos: %1.3f,%1.3f,%1.3f ",last_pose.position[0],last_pose.position[1],last_pose.position[2]);
+    printf("Requested: %1.3f,%1.3f,%1.3f ",last_command.x,last_command.y,last_command.z);
+    printf("Delta Values: %1.3f,%1.3f,%1.3f ",local_delta[0],local_delta[1],local_delta[2]);
+    printf("Speed: %1.3f,%1.3f     \r",xSpeed,ySpeed);
 
     base::AUVMotionCommand motion_command;
     motion_command.heading = last_command.heading;

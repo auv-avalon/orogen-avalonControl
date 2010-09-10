@@ -169,7 +169,16 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
   //      motor_commands.isChanSet[i] = true;
   //      motor_commands.channels[i] = rint(values[i] * 255);
 	hbridgeCommands.target[i] = values[i];
+
+	//Cutoff
+	if(hbridgeCommands.target[i] > 0.8){
+		hbridgeCommands.target[i] = 0.8;
+	}else if(hbridgeCommands.target[i] < 0.8){
+		hbridgeCommands.target[i] = -0.8;
+	}
+
 	//printf(" %f",values[i]);
+	//
     }
     //printf("\n");
 //    motor_commands.stamp = base::Time::now();
