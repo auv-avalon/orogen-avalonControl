@@ -171,11 +171,13 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
 	hbridgeCommands.target[i] = values[i];
 
 	//Cutoff
-	if(hbridgeCommands.target[i] > 0.8){
-		hbridgeCommands.target[i] = 0.8;
-	}else if(hbridgeCommands.target[i] < 0.8){
-		hbridgeCommands.target[i] = -0.8;
+	
+	if(hbridgeCommands.target[i] > _cutoff.value()){
+		hbridgeCommands.target[i] = _cutoff.value();
+	}else if(hbridgeCommands.target[i] < -_cutoff.value()){
+		hbridgeCommands.target[i] = -_cutoff.value();
 	}
+	
 
 	//printf(" %f",values[i]);
 	//

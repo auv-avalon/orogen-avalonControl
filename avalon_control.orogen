@@ -16,7 +16,6 @@ task_context 'PositionControlTask' do
     
     # Maximum duration between two commands, in seconds
     property('timeout', 'double', 1)
-    
     input_port('pose_samples', '/wrappers/samples/RigidBodyState').
         doc("the current pose estimate").
         needs_buffered_connection
@@ -61,6 +60,9 @@ task_context 'MotionControlTask' do
     # Maximum duration between two commands, in seconds
     property('timeout', 'double', 1)
 
+    property('cutoff','double',0.8).
+    	doc("Maximum allowed Value between 0 and 1 that is an cutoff for maximum pwm value 0.8 means 80% PWM")
+    
     input_port('pose_samples', '/wrappers/samples/RigidBodyState').
         doc("the current pose estimate").
         needs_buffered_connection
