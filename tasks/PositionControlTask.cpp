@@ -1,16 +1,8 @@
 #include "PositionControlTask.hpp"
-
-#include <rtt/NonPeriodicActivity.hpp>
-
 #include "tasks/PIDSettingsUpdate.hpp"
 
 
 using namespace avalon_control;
-
-
-RTT::NonPeriodicActivity* PositionControlTask::getNonPeriodicActivity()
-{ return dynamic_cast< RTT::NonPeriodicActivity* >(getActivity().get()); }
-
 
 PositionControlTask::PositionControlTask(std::string const& name, TaskCore::TaskState initial_state)
     : PositionControlTaskBase(name, initial_state)
@@ -48,13 +40,13 @@ bool PositionControlTask::startHook()
     return true;
 }
 
-void PositionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
+void PositionControlTask::updateHook()
 {
     updatePIDSettings(*xPID,   current_x_pid,   _x_pid.get());
     updatePIDSettings(*yPID,   current_y_pid,   _y_pid.get());
     
-    wrappers::samples::RigidBodyState pose_wrapper;
-    if (!_pose_samples.read(pose_wrapper))
+    base::samples::RigidBodyState pose_wrapper;
+    if (!_pose_samples.read(pose_wrapper) == RTT::NewData)
         return;
     base::samples::RigidBodyState pose(pose_wrapper);
 
@@ -72,7 +64,7 @@ void PositionControlTask::updateHook(std::vector<RTT::PortInterface*> const& upd
 
     last_pose = pose;
 
-    if (!_position_commands.read(last_command))
+    if (!_position_commands.read(last_command) == RTT::NewData)
     {
     	if (last_command_time.isNull())
 	    return;

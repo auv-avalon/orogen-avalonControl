@@ -57,14 +57,14 @@ static double correct_pwm_value(double value, double dead_zone)
     else return value;
 }
 
-void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
+void MotionControlTask::updateHook()
 {
     updatePIDSettings(*zPID,   current_z_pid,   _z_pid.get());
     updatePIDSettings(*headingPID, current_heading_pid, _heading_pid.get());
     updatePIDSettings(*pitchPID, current_pitch_pid, _pitch_pid.get());
 
-    wrappers::samples::RigidBodyState pose_wrapper;
-    if (!_pose_samples.read(pose_wrapper))
+    base::samples::RigidBodyState pose_wrapper;
+    if (!_pose_samples.read(pose_wrapper) == RTT::NewData)
         return;
     base::samples::RigidBodyState pose(pose_wrapper);
 
@@ -81,7 +81,7 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
 
     last_pose = pose;
 
-    if (!_motion_commands.read(last_command))
+    if (!_motion_commands.read(last_command) == RTT::NewData)
     {
     	if (last_command_time.isNull())
 	    return;
@@ -140,9 +140,10 @@ void MotionControlTask::updateHook(std::vector<RTT::PortInterface*> const& updat
 
     // And finally convert all the values into the motcon commands
 //    controlData::Motcon motor_commands;
-		hbridge::SimpleCommand hbridgeCommands;
-		for(int i=0;i<HBRIGE_MAXIMUM_BOARDS;i++){
-			hbridgeCommands.mode[i] = hbridge::DM_PWM;
+		//hbridge::SimpleCommand hbridgeCommands;
+		base::actuators::Command hbridgeCommands;
+		for(int i=0;i<6;i++){
+			hbridgeCommands.mode[i] = base::actuators::DM_PWM;
 			hbridgeCommands.target[i] = 0;
 
 		}

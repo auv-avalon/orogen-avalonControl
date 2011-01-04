@@ -4,12 +4,6 @@
 #include "avalon_control/PositionControlTaskBase.hpp"
 
 
-namespace RTT
-{
-    class NonPeriodicActivity;
-}
-
-
 namespace avalon_control {
     class PositionControlTask : public PositionControlTaskBase
     {
@@ -21,7 +15,6 @@ namespace avalon_control {
     public:
         PositionControlTask(std::string const& name = "avalon_control::PositionControlTask", TaskCore::TaskState initial_state = Stopped);
 
-        RTT::NonPeriodicActivity* getNonPeriodicActivity();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the
@@ -64,7 +57,7 @@ namespace avalon_control {
          * this call. If the trigger is caused by something different (for
          * instance, a periodic update), then this set is empty.
          */
-         void updateHook(std::vector<RTT::PortInterface*> const& updated_ports);
+         void updateHook();
         
 
         /** This hook is called by Orocos when the component is in the
