@@ -46,7 +46,7 @@ void PositionControlTask::updateHook()
     updatePIDSettings(*yPID,   current_y_pid,   _y_pid.get());
     
     base::samples::RigidBodyState pose_wrapper;
-    if (!_pose_samples.read(pose_wrapper) == RTT::NewData)
+    if (!_pose_samples.read(pose_wrapper,false) == RTT::NewData)
         return;
     base::samples::RigidBodyState pose(pose_wrapper);
 
@@ -64,7 +64,7 @@ void PositionControlTask::updateHook()
 
     last_pose = pose;
 
-    if (!_position_commands.read(last_command) == RTT::NewData)
+    if (!_position_commands.read(last_command,false) == RTT::NewData)
     {
     	if (last_command_time.isNull())
 	    return;
