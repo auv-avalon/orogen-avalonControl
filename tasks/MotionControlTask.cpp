@@ -142,6 +142,7 @@ void MotionControlTask::updateHook()
 //    controlData::Motcon motor_commands;
 		//hbridge::SimpleCommand hbridgeCommands;
 		base::actuators::Command hbridgeCommands;
+		hbridgeCommands.resize(6);
 		for(int i=0;i<6;i++){
 			hbridgeCommands.mode[i] = base::actuators::DM_PWM;
 			hbridgeCommands.target[i] = 0;
