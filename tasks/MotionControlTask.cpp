@@ -64,7 +64,7 @@ void MotionControlTask::updateHook()
     updatePIDSettings(*pitchPID, current_pitch_pid, _pitch_pid.get());
 
     base::samples::RigidBodyState pose_wrapper;
-    if (!_pose_samples.read(pose_wrapper) == RTT::NewData)
+    if (!_pose_samples.read(pose_wrapper,false) == RTT::NewData)
         return;
     base::samples::RigidBodyState pose(pose_wrapper);
 
@@ -81,7 +81,7 @@ void MotionControlTask::updateHook()
 
     last_pose = pose;
 
-    if (!_motion_commands.read(last_command) == RTT::NewData)
+    if(!_motion_commands.read(last_command,false) == RTT::NewData)
     {
     	if (last_command_time.isNull())
 	    return;
