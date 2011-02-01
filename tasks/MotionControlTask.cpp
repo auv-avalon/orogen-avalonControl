@@ -59,13 +59,17 @@ static double correct_pwm_value(double value, double dead_zone)
 
 void MotionControlTask::updateHook()
 {
+    //printf("Motion Control: update hook\n");
     updatePIDSettings(*zPID,   current_z_pid,   _z_pid.get());
     updatePIDSettings(*headingPID, current_heading_pid, _heading_pid.get());
     updatePIDSettings(*pitchPID, current_pitch_pid, _pitch_pid.get());
 
     base::samples::RigidBodyState pose_wrapper;
-    if (!_pose_samples.read(pose_wrapper,false) == RTT::NewData)
+    if (_pose_samples.read(pose_wrapper) == RTT::NoData){
+    	//printf("Motion Control: Returning because there no pose infos\n");
         return;
+    }
+
     base::samples::RigidBodyState pose(pose_wrapper);
 
     // Wait for at least two poses, in case we have an I part
@@ -76,21 +80,33 @@ void MotionControlTask::updateHook()
     }
 
     double time_step = (pose.time - last_pose.time).toSeconds();
-    if (time_step == 0)
+    if (time_step == 0){
+    	//printf("Returning because no time is passed\n");
         return;
+    }
 
     last_pose = pose;
 
-    if(!_motion_commands.read(last_command,false) == RTT::NewData)
+    //printf("Motion Control: before reading from motion command\n");
+    base::AUVMotionCommand new_command;
+    if(_motion_commands.read(new_command,false) == RTT::NewData)
     {
-    	if (last_command_time.isNull())
-	    return;
-    	if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get())
-	    return fatal();
+    	last_command = new_command;
+    	last_command_time = base::Time::now();
+	//printf("Motion Controller: Got motion command\n");
     }
     else
-    	last_command_time = base::Time::now();
-
+    {
+    	if (last_command_time.isNull()){
+	    //printf("Motion Controller: Returning because i never got data\n");
+	    return;
+	}
+    	if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get()){
+	    //printf("Returning because of an timeout\n");
+	    return fatal();
+	}
+    }
+    //printf("Motion Control: after reading from motion command\n");
     last_command.heading = constrain_angle(last_command.heading);
 
 //	printf("Target Heading: %f  X,Y,Z: %f,%f,%f\n",command.heading,command.x_speed,command.y_speed,command.z);
