@@ -46,8 +46,10 @@ void PositionControlTask::updateHook()
     updatePIDSettings(*yPID,   current_y_pid,   _y_pid.get());
     
     base::samples::RigidBodyState pose_wrapper;
-    if (!_pose_samples.read(pose_wrapper,false) == RTT::NewData)
+    if (_pose_samples.read(pose_wrapper) == RTT::NoData){
         return;
+    }
+
     base::samples::RigidBodyState pose(pose_wrapper);
 
     // Wait for at least two poses, in case we have an I part
@@ -59,16 +61,17 @@ void PositionControlTask::updateHook()
 
 
     double time_step = (pose.time - last_pose.time).toSeconds();
-    if (time_step == 0)
+    if (time_step == 0){
         return;
+    }
 
     last_pose = pose;
 
     if (!_position_commands.read(last_command,false) == RTT::NewData)
     {
-    	if (last_command_time.isNull())
+    	if (last_command_time.isNull()){
 	    return;
-    	if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get())
+    	}if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get())
 	    return fatal();
     }
     else
