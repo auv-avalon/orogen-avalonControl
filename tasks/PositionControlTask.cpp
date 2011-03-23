@@ -103,7 +103,7 @@ void PositionControlTask::updateHook()
 
     base::AUVMotionCommand motion_command;
     motion_command.heading = last_command.heading;
-    motion_command.z = last_pose.position[2] - local_delta[2];// last_command.z;
+    motion_command.z = last_command.z;//last_pose.position[2] - local_delta[2];// last_command.z;
     motion_command.x_speed = xSpeed;
     motion_command.y_speed = ySpeed;
     _motion_commands.write(motion_command);

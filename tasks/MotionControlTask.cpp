@@ -109,7 +109,7 @@ void MotionControlTask::updateHook()
     //printf("Motion Control: after reading from motion command\n");
     last_command.heading = constrain_angle(last_command.heading);
 
-//	printf("Target Heading: %f  X,Y,Z: %f,%f,%f\n",command.heading,command.x_speed,command.y_speed,command.z);
+	printf("Target Heading: %f  X,Y,Z: %f,%f,%f Target Depth: %f\n",last_command.heading,last_command.x_speed,last_command.y_speed,last_command.z,pose.position.z());
     // Update the PID controllers with the actual commands
     zPID->setSetpoint(last_command.z);
     headingPID->setSetpoint(last_command.heading);
