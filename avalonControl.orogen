@@ -2,6 +2,7 @@ name "avalon_control"
 version "0.1"
 
 import_types_from "base"
+import_types_from "avalon_base"
 #import_types_from 'motcon_controller'
 import_types_from "hbridge"
 

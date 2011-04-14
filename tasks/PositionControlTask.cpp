@@ -1,5 +1,4 @@
 #include "PositionControlTask.hpp"
-#include "tasks/PIDSettingsUpdate.hpp"
 
 
 using namespace avalon_control;
@@ -42,8 +41,8 @@ bool PositionControlTask::startHook()
 
 void PositionControlTask::updateHook()
 {
-    updatePIDSettings(*xPID,   current_x_pid,   _x_pid.get());
-    updatePIDSettings(*yPID,   current_y_pid,   _y_pid.get());
+    xPID->updatePIDSettings(current_x_pid,   _x_pid.get());
+    yPID->updatePIDSettings(current_y_pid,   _y_pid.get());
     
     base::samples::RigidBodyState pose_wrapper;
     if (_pose_samples.read(pose_wrapper) == RTT::NoData){

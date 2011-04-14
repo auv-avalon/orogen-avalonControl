@@ -1,6 +1,5 @@
 #include "SpeedControlTask.hpp"
 
-#include "tasks/PIDSettingsUpdate.hpp"
 #include <avalonmath.h>
 
 // Indentified values. Seee                                                                                                                                                        
@@ -51,8 +50,8 @@ static double correct_pwm_value(double value, double dead_zone)
 
 void SpeedControlTask::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
 {
-    updatePIDSettings(*pitchPID,   current_pitch_pid,   _pitch_pid.get());
-    updatePIDSettings(*headingPID, current_heading_pid, _heading_pid.get());
+    pitchPID->updatePIDSettings(current_pitch_pid,   _pitch_pid.get());
+    headingPID->updatePIDSettings(current_heading_pid, _heading_pid.get());
 
     avalon_control::SpeedCommand command;
     if (! _speed_commands.read(command))

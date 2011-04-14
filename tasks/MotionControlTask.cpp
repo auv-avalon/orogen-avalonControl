@@ -1,8 +1,6 @@
 #include "MotionControlTask.hpp"
 #include <avalonmath.h>
 
-#include "tasks/PIDSettingsUpdate.hpp"
-
 using namespace avalon_control;
 
 static double constrain_angle(double value)
@@ -60,9 +58,9 @@ static double correct_pwm_value(double value, double dead_zone)
 void MotionControlTask::updateHook()
 {
     //printf("Motion Control: update hook\n");
-    updatePIDSettings(*zPID,   current_z_pid,   _z_pid.get());
-    updatePIDSettings(*headingPID, current_heading_pid, _heading_pid.get());
-    updatePIDSettings(*pitchPID, current_pitch_pid, _pitch_pid.get());
+    zPID->updatePIDSettings(current_z_pid,   _z_pid.get());
+    headingPID->updatePIDSettings(current_heading_pid, _heading_pid.get());
+    pitchPID->updatePIDSettings(current_pitch_pid, _pitch_pid.get());
 
     base::samples::RigidBodyState pose_wrapper;
     if (_pose_samples.read(pose_wrapper) == RTT::NoData){
