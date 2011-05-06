@@ -82,9 +82,9 @@ namespace avalon_control {
 	
 private:
         /** Current PID settings for the X controller */
-        motor_controller::PIDSettings current_x_pid;
+        avalon_motor_controller::PIDSettings current_x_pid;
         /** Current PID settings for the Y controller */
-        motor_controller::PIDSettings current_y_pid;
+        avalon_motor_controller::PIDSettings current_y_pid;
 
         /** PID controller on the X axis */
         PIDController* xPID;

@@ -13,11 +13,11 @@ namespace avalon_control {
     protected:
     
         /** Current PID settings for the Z controller */
-        motor_controller::PIDSettings current_z_pid;
+        avalon_motor_controller::PIDSettings current_z_pid;
         /** Current PID settings for the heading controller */
-        motor_controller::PIDSettings current_heading_pid;
+        avalon_motor_controller::PIDSettings current_heading_pid;
         /** Current PID settings for the heading controller */
-        motor_controller::PIDSettings current_pitch_pid;
+        avalon_motor_controller::PIDSettings current_pitch_pid;
 
         /** PID controller on the Z axis */
         PIDController* zPID;

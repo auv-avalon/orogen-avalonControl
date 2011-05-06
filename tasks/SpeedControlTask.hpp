@@ -11,9 +11,9 @@ namespace avalon_control {
 
         base::samples::RigidBodyState last_pose;
 
-        motor_controller::PIDSettings current_z_pid;
-        motor_controller::PIDSettings current_heading_pid;
-        motor_controller::PIDSettings current_pitch_pid;
+        avalon_motor_controller::PIDSettings current_z_pid;
+        avalon_motor_controller::PIDSettings current_heading_pid;
+        avalon_motor_controller::PIDSettings current_pitch_pid;
     
         PIDController* zPID;
         PIDController* headingPID;
