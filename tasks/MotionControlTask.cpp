@@ -99,9 +99,12 @@ void MotionControlTask::updateHook()
 	    //printf("Motion Controller: Returning because i never got data\n");
 	    return;
 	}
-    	if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get()){
-	    //printf("Returning because of an timeout\n");
-	    return fatal();
+
+	if(_timeout.get() != 0){
+	    	if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get()){
+		    //printf("Returning because of an timeout\n");
+		    return fatal();
+		}
 	}
     }
     //printf("Motion Control: after reading from motion command\n");
@@ -111,7 +114,7 @@ void MotionControlTask::updateHook()
     // Update the PID controllers with the actual commands
     zPID->setSetpoint(last_command.z);
     headingPID->setSetpoint(last_command.heading);
-    pitchPID->setSetpoint(0);
+    pitchPID->setSetpoint(_pitch_target.get());
 
     // Now update the sensor readings. Wrap the heading at PI/-PI if needed, to
     // match the given command.
@@ -128,7 +131,7 @@ void MotionControlTask::updateHook()
     double middle_vertical = zPID->control(current_z, time_step);
     double rear_horizontal = headingPID->control(current_heading, time_step);
     double rear_vertical   = pitchPID->control(current_pitch, time_step);
-
+    printf("Current Pitch: %f, resulting in: %f\n",current_pitch,rear_vertical);
     double middle_horizontal = _y_factor.get() * last_command.y_speed; //pose.velocity.y();
     double left  = _x_factor.get() * last_command.x_speed;//pose.velocity.x();
     if (left < -1.0) left = 1.0;
@@ -138,7 +141,7 @@ void MotionControlTask::updateHook()
     // Now take into account couplings
     rear_vertical   += middle_vertical   * _z_coupling_factor.get();
     rear_horizontal -= middle_horizontal * _y_coupling_factor.get();
-
+    printf("Pitch after Couping: %f\n",rear_vertical);
     // Take into account the saturations due to . Namely, we prefer heading to
     // striving and pitch to depth. This is VERY crude.
     if (fabs(rear_vertical) > 1.0)
@@ -166,11 +169,11 @@ void MotionControlTask::updateHook()
     // Apply correction factor from PWM-to-force response curve
     middle_vertical   = correct_pwm_value(middle_vertical, 0.14);
     middle_horizontal = correct_pwm_value(middle_horizontal, 0.14);
-    rear_vertical     = correct_pwm_value(rear_vertical, 0.20);
+    rear_vertical     = correct_pwm_value(rear_vertical, 0.14);
     rear_horizontal   = correct_pwm_value(rear_horizontal, 0.14);
     left              = correct_pwm_value(left, 0.14);
     right             = correct_pwm_value(right, 0.14);
-
+    printf("Pitch after correction: %f\n",rear_vertical);
     double values[6];
     values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * middle_vertical;
     values[MIDDLE_HORIZONTAL] = DIR_MIDDLE_HORIZONTAL * middle_horizontal;

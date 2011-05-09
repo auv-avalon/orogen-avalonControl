@@ -44,6 +44,9 @@ task_context 'MotionControlTask' do
     # thruster
     property 'heading_pid', '/motor_controller/PIDSettings'
 
+    #Target Pitch value to reach for the controller in RAD
+    property('pitch_target','double',0)
+
     # Factor applied to commands in m/s to compute the PWM for middle thruster
     property('y_factor', 'double', 0)
     # Factor applied to the PWM for the middle horizontal thruster to get the
