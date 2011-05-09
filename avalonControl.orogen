@@ -12,8 +12,8 @@ type_export_policy :used
 using_library 'avalontools'
 
 task_context 'PositionControlTask' do
-    property 'x_pid',   '/motor_controller/PIDSettings'
-    property 'y_pid',   '/motor_controller/PIDSettings'
+    property 'x_pid',   '/avalon_motor_controller/PIDSettings'
+    property 'y_pid',   '/avalon_motor_controller/PIDSettings'
     
     # Maximum duration between two commands, in seconds
     property('timeout', 'double', 1)
@@ -35,14 +35,14 @@ end
 task_context 'MotionControlTask' do
     # PID settings for the depth controller. Generates values for the middle
     # vertical thruster
-    property 'z_pid',   '/motor_controller/PIDSettings'
+    property 'z_pid',   '/avalon_motor_controller/PIDSettings'
     # Factor applied to the PWM value generated for the middle vertical thruster
     # for depth control to generate the corresponding part for the rear thruster
     property('z_coupling_factor', 'double', 0)
 
     # PID settings for the heading controller. Generates values for the rear
     # thruster
-    property 'heading_pid', '/motor_controller/PIDSettings'
+    property 'heading_pid', '/avalon_motor_controller/PIDSettings'
 
     #Target Pitch value to reach for the controller in RAD
     property('pitch_target','double',0)
@@ -55,7 +55,7 @@ task_context 'MotionControlTask' do
 
     # PID settings for the pitch controller. Generates values for the rear
     # thruster
-    property 'pitch_pid',   '/motor_controller/PIDSettings'
+    property 'pitch_pid',   '/avalon_motor_controller/PIDSettings'
 
     # Factor applied to commands in m/s to compute the PWM for left and right
     # thrusters
@@ -103,14 +103,14 @@ end
 # task_context 'SpeedControlTask' do
 #     # PID settings for the depth controller. Generates values for the middle
 #     # vertical thruster
-#     property('z_pid', '/motor_controller/PIDSettings')
+#     property('z_pid', '/avalon_motor_controller/PIDSettings')
 #     # Factor applied to the PWM value generated for the middle vertical thruster
 #     # for depth control to generate the corresponding part for the rear thruster
 #     property('z_coupling_factor', 'double', 0)
 # 
 #     # PID settings for the pitch controller. Generates values for the rear
 #     # thruster
-#     property('pitch_pid', '/motor_controller/PIDSettings')
+#     property('pitch_pid', '/avalon_motor_controller/PIDSettings')
 # 
 #     # Factor applied to commands in m/s to compute the PWM for middle thruster
 #     property('y_factor', 'double', 0)
@@ -120,7 +120,7 @@ end
 # 
 #     # PID settings for the heading controller. Generates values for the rear
 #     # thruster
-#     property('heading_pid', '/motor_controller/PIDSettings')
+#     property('heading_pid', '/avalon_motor_controller/PIDSettings')
 # 
 #     # Factor applied to commands in m/s to compute the PWM for left and right
 #     # thrusters

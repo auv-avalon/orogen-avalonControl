@@ -18,7 +18,7 @@ MotionControlTask::MotionControlTask(std::string const& name, TaskCore::TaskStat
     headingPID = new PIDController();
     pitchPID   = new PIDController();
 
-    motor_controller::PIDSettings default_settings;
+    avalon_motor_controller::PIDSettings default_settings;
     default_settings.min = -1;
     default_settings.max = 1;
     _z_pid.set(default_settings);
