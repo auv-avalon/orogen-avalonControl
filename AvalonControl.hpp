@@ -18,9 +18,9 @@ namespace avalon_control
 
     enum MOTCON_CHANNEL_DIRECTIONS
     {
-        DIR_MIDDLE_HORIZONTAL = 1,
+        DIR_MIDDLE_HORIZONTAL = -1,
         DIR_MIDDLE_VERTICAL   = 1,
-        DIR_REAR_HORIZONTAL   = -1,
+        DIR_REAR_HORIZONTAL   = 1,
         DIR_REAR_VERTICAL     = 1,
         DIR_RIGHT = -1,
         DIR_LEFT  = -1
