@@ -83,6 +83,9 @@ task_context 'MotionControlTask' do
 
     # The internal state of the controller
     output_port 'debug', '/avalon_control/MotionControllerState'
+    
+    error_states :TIMEOUT
+    runtime_states :WAITING_FOR_ORIENTATION, :WAITING_FOR_COMMAND
 
     port_driven :pose_samples
 end

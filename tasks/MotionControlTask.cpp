@@ -64,8 +64,8 @@ void MotionControlTask::updateHook()
 
     base::samples::RigidBodyState pose_wrapper;
     if (_pose_samples.read(pose_wrapper) == RTT::NoData){
+	return state(WAITING_FOR_ORIENTATION);
     	//printf("Motion Control: Returning because there no pose infos\n");
-        return;
     }
 
     base::samples::RigidBodyState pose(pose_wrapper);
@@ -97,13 +97,13 @@ void MotionControlTask::updateHook()
     {
     	if (last_command_time.isNull()){
 	    //printf("Motion Controller: Returning because i never got data\n");
-	    return;
+	    return state(WAITING_FOR_COMMAND);
 	}
 
 	if(_timeout.get() != 0){
 	    	if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get()){
 		    //printf("Returning because of an timeout\n");
-		    return fatal();
+		    return error(TIMEOUT);
 		}
 	}
     }
@@ -207,11 +207,12 @@ void MotionControlTask::updateHook()
   //  _motor_commands.write(motor_commands);
 		_hbridge_commands.write(hbridgeCommands);
 
-    avalon_control::MotionControllerState state;
-    state.z_pid       = zPID->getState();
-    state.heading_pid = headingPID->getState();
-    state.pitch_pid   = pitchPID->getState();
-    _debug.write(state);
+    avalon_control::MotionControllerState state_;
+    state_.z_pid       = zPID->getState();
+    state_.heading_pid = headingPID->getState();
+    state_.pitch_pid   = pitchPID->getState();
+    _debug.write(state_);
+    return state(RUNNING);
 }
 
 // void MotionControlTask::errorHook()
