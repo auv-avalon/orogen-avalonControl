@@ -134,7 +134,7 @@ void MotionControlTask::updateHook()
     printf("Current Pitch: %f, resulting in: %f\n",current_pitch,rear_vertical);
     double middle_horizontal = _y_factor.get() * last_command.y_speed; //pose.velocity.y();
     double left  = _x_factor.get() * last_command.x_speed;//pose.velocity.x();
-    if (left < -1.0) left = 1.0;
+    if (left < -1.0) left = -1.0;
     else if (left > 1.0) left = 1.0;
     double right = left;
 
