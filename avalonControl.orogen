@@ -14,7 +14,7 @@ using_library 'avalontools'
 task_context 'PositionControlTask' do
     property 'x_pid',   '/avalon_motor_controller/PIDSettings'
     property 'y_pid',   '/avalon_motor_controller/PIDSettings'
-    
+
     # Maximum duration between two commands, in seconds
     property('timeout', 'double', 1)
     input_port('pose_samples', '/base/samples/RigidBodyState').
@@ -66,7 +66,7 @@ task_context 'MotionControlTask' do
 
     property('cutoff','double',0.8).
     	doc("Maximum allowed Value between 0 and 1 that is an cutoff for maximum pwm value 0.8 means 80% PWM")
-    
+
     input_port('pose_samples', '/base/samples/RigidBodyState').
         doc("the current pose estimate").
         needs_buffered_connection
@@ -83,11 +83,38 @@ task_context 'MotionControlTask' do
 
     # The internal state of the controller
     output_port 'debug', '/avalon_control/MotionControllerState'
-    
+
     error_states :TIMEOUT
     runtime_states :WAITING_FOR_ORIENTATION, :WAITING_FOR_COMMAND
 
     port_driven :pose_samples
+end
+
+task_context "MotionFeedbackTask" do
+   # A configuration property (here, a std::string). Its value can be retrieved
+   # in the C++ code with # _config_value.get() and _config_value.set(new_value).
+   property "config_value", "/std/string"
+
+   # An input port, i.e. an object from which the component gets data from
+   # other components' outputs
+   #
+   # Data can be retrieved using _input.read(value), which returns true if data
+   # was available, and false otherwise. _input.connected() returns if this
+   # input is connected to an output or not.
+   input_port('hbridge_feedback', '/base/actuators/Status').
+       doc("Feedback of HBridge commands. Contains the actual motor_status output of the HBridge.")
+
+   # An output port, i.e. an object to which the component pushes data so that
+   # it is transmitted to other components' inputs
+   #
+   # Data can be written using _output.write(value). _output.connected() returns
+   # if this output is connected to an input or not.
+   output_port('hbridge_status', '/base/actuators/Status').
+       doc("Feedback of HBridge commands. Contains the actual motor_status output of the HBridge.")
+
+   # If you want that component's updateHook() to be executed when the "input"
+   # port gets data, uncomment this
+   port_driven "hbridge_feedback"
 end
 
 # Speed control on Avalon is using all 6 thrusters
@@ -110,30 +137,30 @@ end
 #     # Factor applied to the PWM value generated for the middle vertical thruster
 #     # for depth control to generate the corresponding part for the rear thruster
 #     property('z_coupling_factor', 'double', 0)
-# 
+#
 #     # PID settings for the pitch controller. Generates values for the rear
 #     # thruster
 #     property('pitch_pid', '/avalon_motor_controller/PIDSettings')
-# 
+#
 #     # Factor applied to commands in m/s to compute the PWM for middle thruster
 #     property('y_factor', 'double', 0)
 #     # Factor applied to the PWM for the middle horizontal thruster to get the
 #     # corresponding part for the rear horizontal thruster
 #     property('y_coupling_factor', 'double', 0)
-# 
+#
 #     # PID settings for the heading controller. Generates values for the rear
 #     # thruster
 #     property('heading_pid', '/avalon_motor_controller/PIDSettings')
-# 
+#
 #     # Factor applied to commands in m/s to compute the PWM for left and right
 #     # thrusters
 #     property('x_factor', 'double', 0)
-# 
+#
 #     input_port('pose_samples', '/base/samples/RigidBodyState').
 #         needs_data_connection
 #     input_port('speed_commands', '/avalon_control/SpeedCommand').
 #         needs_data_connection
-# 
+#
 #     output_port("motor_commands", "/controlData/Motcon")
 #     output_port('debug', '/avalon_control/SpeedControllerState')
 #     port_driven :pose_samples
