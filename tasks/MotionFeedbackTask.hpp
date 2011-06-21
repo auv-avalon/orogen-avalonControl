@@ -12,7 +12,6 @@ namespace avalon_control {
     protected:
     base::actuators::Status motor_status;
 
-
     public:
         MotionFeedbackTask(std::string const& name = "avalon_control::MotionFeedbackTask", TaskCore::TaskState initial_state = Stopped);
         MotionFeedbackTask(std::string const& name, RTT::ExecutionEngine* engine, TaskCore::TaskState initial_state = Stopped);
@@ -75,7 +74,12 @@ namespace avalon_control {
          * before calling start() again.
          */
         // void cleanupHook();
+
+        private:
+            std::vector<base::actuators::MotorState> ordered_motor_status;
     };
+
+
 }
 
 #endif
