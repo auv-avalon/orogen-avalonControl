@@ -18,16 +18,13 @@ task_context 'PositionControlTask' do
     # Maximum duration between two commands, in seconds
     property('timeout', 'double', 1)
     input_port('pose_samples', '/base/samples/RigidBodyState').
-        doc("the current pose estimate").
-        needs_buffered_connection
+        doc("the current pose estimate")
 
     input_port('position_commands', '/base/AUVPositionCommand').
-        doc("the input commands").
-        needs_buffered_connection
+        doc("the input commands")
 
     output_port('motion_commands', '/base/AUVMotionCommand').
         doc("the output commands")
-#        needs_buffered_connection
 
     port_driven :pose_samples
 end
@@ -68,18 +65,13 @@ task_context 'MotionControlTask' do
     	doc("Maximum allowed Value between 0 and 1 that is an cutoff for maximum pwm value 0.8 means 80% PWM")
 
     input_port('pose_samples', '/base/samples/RigidBodyState').
-        doc("the current pose estimate").
-        needs_buffered_connection
+        doc("the current pose estimate")
 
     input_port('motion_commands', '/base/AUVMotionCommand').
-        doc("the input commands").
-        needs_buffered_connection
+        doc("the input commands")
 
     # The speed commands
-#    output_port("motor_commands", "/controlData/Motcon")
-
-		# The speed commands for HBridge
-		output_port("hbridge_commands","base/actuators/Command")
+    output_port("hbridge_commands","base/actuators/Command")
 
     # The internal state of the controller
     output_port 'debug', '/avalon_control/MotionControllerState'
