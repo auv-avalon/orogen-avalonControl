@@ -47,6 +47,8 @@ void MotionFeedbackTask::updateHook()
     // Pass over input directly to output
     while (_hbridge_feedback.read(motor_status) == RTT::NewData)
     {
+	ordered_motor_status.clear();
+
         // re-order thrusters according to the model requirements.
         // see: avalonModel/Estimation.cpp -> setPWMLevels().
         ordered_motor_status.push_back(motor_status.states[LEFT]);                // model: O^1
