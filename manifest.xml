@@ -7,6 +7,6 @@
   <export>
     <cpp cflags="" lflags="" />
   </export>
-<depend package="drivers/orogen/hbridge">
+  <depend package="drivers/orogen/hbridge"/>
 </package>
 
