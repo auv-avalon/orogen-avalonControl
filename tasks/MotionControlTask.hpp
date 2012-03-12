@@ -11,6 +11,7 @@ namespace avalon_control {
 	friend class MotionControlTaskBase;
 
     protected:
+        void sendStopCommand();
     
         /** Current PID settings for the Z controller */
         avalon_motor_controller::PIDSettings current_z_pid;
@@ -87,12 +88,12 @@ namespace avalon_control {
          *
          * Call recovered() to go back in the Runtime state.
          */
-        // void errorHook();
+         void errorHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Running to Stopped after stop() has been called.
          */
-        // void stopHook();
+         void stopHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Stopped to PreOperational, requiring the call to configureHook()

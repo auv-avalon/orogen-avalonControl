@@ -190,13 +190,31 @@ void MotionControlTask::updateHook()
     return state(RUNNING);
 }
 
-// void MotionControlTask::errorHook()
-// {
-// }
-// void MotionControlTask::stopHook()
-// {
-// }
+
+void MotionControlTask::errorHook()
+{
+    sendStopCommand();
+}
+void MotionControlTask::stopHook()
+{
+    sendStopCommand();
+}
+
+
+
 // void MotionControlTask::cleanupHook()
 // {
 // }
 
+
+void MotionControlTask::sendStopCommand(){
+    base::actuators::Command hbridgeCommands;
+    hbridgeCommands.resize(6);
+    for(int i=0;i<6;i++){
+        hbridgeCommands.mode[i] = base::actuators::DM_PWM;
+        hbridgeCommands.target[i] = 0;
+
+    }
+    hbridgeCommands.time = base::Time::now();
+    _hbridge_commands.write(hbridgeCommands);
+}
