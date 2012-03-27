@@ -8,5 +8,6 @@
     <cpp cflags="" lflags="" />
   </export>
   <depend package="drivers/orogen/hbridge"/>
+  <depend package="avalon/orogen/avalon_base"/>
 </package>
 
