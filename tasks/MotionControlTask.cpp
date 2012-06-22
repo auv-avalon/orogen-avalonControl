@@ -24,6 +24,7 @@ MotionControlTask::MotionControlTask(std::string const& name, TaskCore::TaskStat
     _z_pid.set(default_settings);
     _pitch_pid.set(default_settings);
     _heading_pid.set(default_settings);
+    last_ground_position = std::numeric_limits<double>::infinity();	
 }
 
 /// The following lines are template definitions for the various state machine
@@ -101,6 +102,22 @@ void MotionControlTask::updateHook()
 	}
     }
     last_command.heading = constrain_angle(last_command.heading);
+
+    if(_use_min_ground_distance.get()){
+	base::samples::RigidBodyState rbs;
+	if(_ground_distance.connected()){
+		while(_ground_distance.read(rbs) == RTT::NewData){
+			if(rbs.position.z() != 0.0)
+				last_ground_position = pose.position.z() - rbs.position.z(); 	
+		}
+	}else{
+		last_ground_position = -std::numeric_limits<double>::max();	
+	}
+
+    	if(last_command.z - _min_ground_distance.get() < last_ground_position){
+		last_command.z = last_ground_position + _min_ground_distance.get();	
+	}
+    }	
 
     // Update the PID controllers with the actual commands
     zPID->setSetpoint(last_command.z);

@@ -11,6 +11,7 @@ namespace avalon_control {
 	friend class MotionControlTaskBase;
 
     protected:
+	double last_ground_position;
         void sendStopCommand();
     
         /** Current PID settings for the Z controller */

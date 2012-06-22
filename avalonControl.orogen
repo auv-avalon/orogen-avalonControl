@@ -36,6 +36,14 @@ task_context 'MotionControlTask' do
     # Factor applied to the PWM value generated for the middle vertical thruster
     # for depth control to generate the corresponding part for the rear thruster
     property('z_coupling_factor', 'double', 0)
+    
+
+    property('use_min_ground_distance', 'bool', true).
+	doc("if true, avalon tryes to keep at leased the given distance to ground")
+    property('min_ground_distance', 'double', 0.2).
+	doc("Minimum distance to the ground, only applied if use_ peoperty is set")
+    input_port("ground_distance", "base::samples::RigidBodyState").
+	doc("needs to be connected if ground distance should be kept, also use_ peoeprty needs to be true")
 
     # PID settings for the heading controller. Generates values for the rear
     # thruster
