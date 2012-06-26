@@ -24,7 +24,7 @@ MotionControlTask::MotionControlTask(std::string const& name, TaskCore::TaskStat
     _z_pid.set(default_settings);
     _pitch_pid.set(default_settings);
     _heading_pid.set(default_settings);
-    last_ground_position = std::numeric_limits<double>::infinity();	
+    last_ground_position = -std::numeric_limits<double>::max();
 }
 
 /// The following lines are template definitions for the various state machine
