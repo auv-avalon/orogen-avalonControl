@@ -113,7 +113,7 @@ void MotionControlTask::updateHook()
 	}else{
 		last_ground_position = -std::numeric_limits<double>::max();	
 	}
-
+		_estimated_ground_pos.write(last_ground_position);
     	if(last_command.z - _min_ground_distance.get() < last_ground_position){
 		last_command.z = last_ground_position + _min_ground_distance.get();	
 	}
