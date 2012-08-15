@@ -10,5 +10,6 @@
   <depend package="drivers/orogen/hbridge"/>
   <depend package="avalon/orogen/avalon_base"/>
   <depend package="avalon/avalontools"/>
+  <tags>stable</tags>
 </package>
 
