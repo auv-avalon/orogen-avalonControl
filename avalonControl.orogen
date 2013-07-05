@@ -93,6 +93,18 @@ task_context 'MotionControlTask' do
     port_driven :pose_samples
 end
 
+task_context "FakeWriter" do
+
+    property('speed_x','double',0).dynamic
+    property('speed_y','double',0).dynamic
+    property('Z','double',0).dynamic
+    property('heading','double',0).dynamic
+
+    output_port('motion_commands', '/base/AUVMotionCommand')
+
+    periodic(0.1)
+end
+
 task_context "MotionFeedbackTask" do
    # A configuration property (here, a std::string). Its value can be retrieved
    # in the C++ code with # _config_value.get() and _config_value.set(new_value).
