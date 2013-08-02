@@ -37,7 +37,8 @@ task_context 'MotionControlTask' do
     # Factor applied to the PWM value generated for the middle vertical thruster
     # for depth control to generate the corresponding part for the rear thruster
     property('z_coupling_factor', 'double', 0)
-    
+   
+    input_port('dummy_feedback',"/base/actuators/Status")
 
     property('use_min_ground_distance', 'bool', true).
 	doc("if true, avalon tryes to keep at leased the given distance to ground")
@@ -101,6 +102,16 @@ task_context "FakeWriter" do
     property('heading','double',0).dynamic
 
     output_port('motion_commands', '/base/AUVMotionCommand')
+
+    periodic(0.1)
+end
+
+task_context "RelFakeWriter" do
+    output_port('position_command',"base::AUVPositionCommand")
+    property('x','double',0).dynamic
+    property('y','double',0).dynamic
+    property('z','double',0).dynamic
+    property('heading','double',0).dynamic
 
     periodic(0.1)
 end

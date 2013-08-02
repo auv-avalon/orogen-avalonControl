@@ -185,6 +185,11 @@ void MotionControlTask::updateHook()
     values[LEFT]              = DIR_LEFT              * left;
     values[RIGHT]             = DIR_RIGHT             * right;
 
+    if(_cutoff.value().size() != 6){
+        std::cerr << "Warning sizes are invalid" << std::endl;
+        return;
+    }
+    
     for (int i = 0; i < 6; ++i)
     {
 	hbridgeCommands.target[i] = values[i];
