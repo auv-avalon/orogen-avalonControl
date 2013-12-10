@@ -1,10 +1,14 @@
 #include "MotionControlTask.hpp"
 #include <avalonmath.h>
+#include <cmath>
 
 using namespace avalon_control;
 
 static double constrain_angle(double value)
 {
+    if(!std::isfinite(value)){
+        value = 0;
+    }
     if (value < 0)
         return fmodf(value - M_PI, 2 * M_PI) + M_PI;
     else
@@ -127,9 +131,8 @@ void MotionControlTask::updateHook()
     // Now update the sensor readings. Wrap the heading at PI/-PI if needed, to
     // match the given command.
     double current_z = pose.position.z();
-    double current_heading, current_pitch, current_roll;
-    Avalonmath::quaternionToEuler(pose.orientation,
-            current_heading, current_pitch, current_roll);
+    double current_heading = base::getYaw(pose.orientation);
+    double current_pitch = base::getPitch(pose.orientation);
 
     if (current_heading - last_command.heading > M_PI)
         current_heading -= 2*M_PI;
@@ -192,6 +195,11 @@ void MotionControlTask::updateHook()
     
     for (int i = 0; i < 6; ++i)
     {
+        if(!std::isfinite(values[i])){
+
+            std::cerr << "Waning got nan value within controller chain" << i << " lastheading " << last_command.heading << std::endl;
+            values[i] = 0;
+        }
 	hbridgeCommands.target[i] = values[i];
 
 	//Cutoff
