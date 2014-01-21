@@ -1,4 +1,5 @@
 #include "MotionControlTask.hpp"
+#include <base/commands/Joints.hpp>
 #include <avalonmath.h>
 #include <cmath>
 
@@ -180,7 +181,7 @@ void MotionControlTask::updateHook()
     rear_horizontal   = correct_pwm_value(rear_horizontal, 0.14);
     left              = correct_pwm_value(left, 0.14);
     right             = correct_pwm_value(right, 0.14);
-    double values[6];
+    std::vector<float> values(6);
     values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * middle_vertical;
     values[MIDDLE_HORIZONTAL] = DIR_MIDDLE_HORIZONTAL * middle_horizontal;
     values[REAR_VERTICAL]     = DIR_REAR_VERTICAL     * rear_vertical;
@@ -211,7 +212,10 @@ void MotionControlTask::updateHook()
     }
     hbridgeCommands.time = base::Time::now();
     _hbridge_commands.write(hbridgeCommands);
-
+    
+    base::commands::Joints jointCommands = base::commands::Joints::Raw(values);
+    jointCommands.time = hbridgeCommands.time;
+    _joint_commands.write(jointCommands);
     avalon_control::MotionControllerState state_;
     state_.z_pid       = zPID->getState();
     state_.heading_pid = headingPID->getState();
