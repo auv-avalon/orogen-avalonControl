@@ -57,13 +57,13 @@ bool FakeWriter::configureHook()
 {
     if (! FakeWriterBase::configureHook())
         return false;
-    updateDynamicProperties();
     return true;
 }
 bool FakeWriter::startHook()
 {
     if (! FakeWriterBase::startHook())
         return false;
+    updateDynamicProperties();
     return true;
 }
 void FakeWriter::updateHook()
