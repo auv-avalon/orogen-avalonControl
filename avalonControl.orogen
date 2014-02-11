@@ -85,6 +85,7 @@ task_context 'MotionControlTask' do
     
     # The speed commands
     output_port("joint_commands","base/commands/Joints")
+    input_port("joints_in","base/samples/Joints")
 
     # The internal state of the controller
     output_port 'debug', '/avalon_control/MotionControllerState'
