@@ -68,7 +68,7 @@ void MotionControlTask::updateHook()
     pitchPID->updatePIDSettings(current_pitch_pid, _pitch_pid.get());
 
     base::samples::RigidBodyState pose_wrapper;
-    if (_pose_samples.read(pose_wrapper) == RTT::NoData){
+    if (_pose_samples.readNewest(pose_wrapper) == RTT::NoData){
 	return state(WAITING_FOR_ORIENTATION);
     }
 
@@ -89,7 +89,7 @@ void MotionControlTask::updateHook()
     last_pose = pose;
 
     base::AUVMotionCommand new_command;
-    if(_motion_commands.read(new_command,false) == RTT::NewData)
+    if(_motion_commands.readNewest(new_command) == RTT::NewData)
     {
     	last_command = new_command;
     	last_command_time = base::Time::now();
