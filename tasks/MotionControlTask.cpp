@@ -204,12 +204,14 @@ void MotionControlTask::updateHook()
 	hbridgeCommands.target[i] = values[i];
 
 	//Cutoff
-	if(hbridgeCommands.target[i] > _cutoff.value()[i]){
-		hbridgeCommands.target[i] = _cutoff.value()[i];
-	}else if(hbridgeCommands.target[i] < -_cutoff.value()[i]){
-		hbridgeCommands.target[i] = -_cutoff.value()[i];
-	}
+	if(values[i] > _cutoff.value()[i]){
+		values[i] = _cutoff.value()[i];
+	}else if(values[i] < -_cutoff.value()[i]){
+	        values[i] = -_cutoff.value()[i];
+        }
+	hbridgeCommands.target[i] = values[i];
     }
+    
     hbridgeCommands.time = base::Time::now();
     _hbridge_commands.write(hbridgeCommands);
     
