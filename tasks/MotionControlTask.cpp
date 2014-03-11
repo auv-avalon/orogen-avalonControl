@@ -29,7 +29,7 @@ MotionControlTask::MotionControlTask(std::string const& name, TaskCore::TaskStat
     _z_pid.set(default_settings);
     _pitch_pid.set(default_settings);
     _heading_pid.set(default_settings);
-    last_ground_position = -std::numeric_limits<double>::max();
+    last_ground_position = -std::numeric_limits<double>::max();    
 }
 
 /// The following lines are template definitions for the various state machine
@@ -217,6 +217,14 @@ void MotionControlTask::updateHook()
     
     base::commands::Joints jointCommands = base::commands::Joints::Raw(values);
     jointCommands.time = hbridgeCommands.time;
+    
+    if(_joint_names.get().size() == values.size()){
+      jointCommands.names = _joint_names.get();
+    }
+    else{
+      std::cerr << "Wrong number of joint names. " << values.size() << " names are needed." << std::endl;
+    }
+    
     _joint_commands.write(jointCommands);
     avalon_control::MotionControllerState state_;
     state_.z_pid       = zPID->getState();
