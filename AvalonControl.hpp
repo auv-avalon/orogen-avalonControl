@@ -10,19 +10,19 @@ namespace avalon_control
     {
         MIDDLE_HORIZONTAL = 5,
         MIDDLE_VERTICAL   = 1,
-        REAR_HORIZONTAL   = 4,
-        REAR_VERTICAL     = 0,
+        REAR_HORIZONTAL   = 0,
+        REAR_VERTICAL     = 4,
         RIGHT = 2,
         LEFT  = 3 
     };
 
     enum MOTCON_CHANNEL_DIRECTIONS
     {
-        DIR_MIDDLE_HORIZONTAL = -1,
-        DIR_MIDDLE_VERTICAL   = 1,
-        DIR_REAR_HORIZONTAL   = 1,
+        DIR_MIDDLE_HORIZONTAL = 1,
+        DIR_MIDDLE_VERTICAL   = -1,
+        DIR_REAR_HORIZONTAL   = -1,
         DIR_REAR_VERTICAL     = 1,
-        DIR_RIGHT = -1,
+        DIR_RIGHT = 1,
         DIR_LEFT  = -1
     };
 
