@@ -46,6 +46,7 @@ void PositionControlTask::updateHook()
     
     base::samples::RigidBodyState pose_wrapper;
     if (_pose_samples.read(pose_wrapper) == RTT::NoData){
+        state(WAITING_FOR_ORIENTATION);
         return;
     }
 
@@ -55,12 +56,14 @@ void PositionControlTask::updateHook()
     if (last_pose.time.isNull())
     {
         last_pose = pose;
+        state(WAITING_FOR_ORIENTATION);
         return;
     }
 
 
     double time_step = (pose.time - last_pose.time).toSeconds();
     if (time_step == 0){
+        state(WAITING_FOR_VALID_ORIENTATION);
         return;
     }
 
@@ -69,6 +72,7 @@ void PositionControlTask::updateHook()
     if (!_position_commands.read(last_command,false) == RTT::NewData)
     {
     	if (last_command_time.isNull()){
+            state(WAITING_FOR_COMMAND);
 	    return;
     	}if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get())
 	    return fatal();

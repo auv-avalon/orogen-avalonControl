@@ -26,6 +26,7 @@ task_context 'PositionControlTask' do
     output_port('motion_commands', '/base/AUVMotionCommand').
         doc("the output commands")
     
+    runtime_states :WAITING_FOR_ORIENTATION, :WAITING_FOR_COMMAND, :WAITING_FOR_VALID_ORIENTATION
 
     port_driven :pose_samples
 end
