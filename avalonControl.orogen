@@ -17,6 +17,8 @@ task_context 'PositionControlTask' do
 
     # Maximum duration between two commands, in seconds
     property('timeout', 'double', 1)
+
+    property('optimal_heading_distance', 'double', 2.0)
     input_port('pose_samples', '/base/samples/RigidBodyState').
         doc("the current pose estimate")
 
