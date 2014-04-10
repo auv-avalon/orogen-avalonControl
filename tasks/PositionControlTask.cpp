@@ -108,7 +108,7 @@ void PositionControlTask::updateHook()
     if(pos_delta.norm() < _optimal_heading_distance.get()){
         motion_command.heading = last_command.heading;
     } else {
-        motion_command.heading = atan2(pos_delta[1], pos_delta[1]);
+        motion_command.heading = atan2(-pos_delta[1], -pos_delta[0]);
     }
     motion_command.z = last_command.z;//last_pose.position[2] - local_delta[2];// last_command.z;
     motion_command.x_speed = xSpeed;
