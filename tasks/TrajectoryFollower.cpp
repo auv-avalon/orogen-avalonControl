@@ -51,8 +51,8 @@ void TrajectoryFollower::updateHook()
     std::pair<double,double> p = spline.advance(spline.findOneClosestPoint(rbs.position, 0.1),_step_width.get(),0.1);
     std::pair<Eigen::Vector3d ,Eigen::Vector3d> p2 = spline.getPointAndTangent(p.first);
     Eigen::Vector3d next_point = p2.first;
-
-    if(p.first == spline.getEndParam()){
+    printf("first: %f, end: %f\n",p.first,spline.getEndParam());
+    if(fabs(p.first - spline.getEndParam()) < -0.001){
         if(!endReached){
             endReachTime = rbs.time;
             endReached = true;
@@ -73,7 +73,7 @@ void TrajectoryFollower::updateHook()
     cmd.heading = heading;
     _position_command.write(cmd);
     base::Waypoint wp(next_point,heading,0,0);
-    printf("Heading: %f, from acos(%f)\n",heading,direction[0]);
+    
     _next_position.write(wp);
 
     
