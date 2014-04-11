@@ -254,11 +254,25 @@ void MotionControlTask::stopHook()
 void MotionControlTask::sendStopCommand(){
     base::actuators::Command hbridgeCommands;
     hbridgeCommands.resize(6);
+    std::vector<float> values;
     for(int i=0;i<6;i++){
         hbridgeCommands.mode[i] = base::actuators::DM_PWM;
         hbridgeCommands.target[i] = 0;
+        values.push_back(0);
 
     }
     hbridgeCommands.time = base::Time::now();
     _hbridge_commands.write(hbridgeCommands);
+    
+    base::commands::Joints jointCommands = base::commands::Joints::Raw(values);
+    jointCommands.time = hbridgeCommands.time;
+    
+    if(_joint_names.get().size() == values.size()){
+      jointCommands.names = _joint_names.get();
+    }
+    else{
+      std::cerr << "Wrong number of joint names. " << values.size() << " names are needed." << std::endl;
+    }
+    
+    _joint_commands.write(jointCommands);
 }

@@ -126,6 +126,20 @@ task_context "RelFakeWriter" do
     periodic(0.1)
 end
 
+task_context "TrajectoryFollower" do
+    output_port('next_position',"base::Waypoint")
+    output_port('position_command',"base::AUVPositionCommand")
+    input_port('pose_samples',"base::samples::RigidBodyState")
+
+    property("trajectory", "/base/Trajectory") 
+
+    property('timeout_at_end_before_mark_end_reached','double',10)
+    property('step_width','double',2.0)
+    runtime_states(:ALIGN_AT_END, :REACHED_END, :WAITING_FOR_POSE)
+
+    port_driven 
+end
+
 task_context "MotionFeedbackTask" do
    # A configuration property (here, a std::string). Its value can be retrieved
    # in the C++ code with # _config_value.get() and _config_value.set(new_value).
