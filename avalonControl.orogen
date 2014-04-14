@@ -133,7 +133,10 @@ task_context "TrajectoryFollower" do
 
     property("trajectory", "/base/Trajectory") 
 
+
+    property('use_zero_heading','bool',false).doc("use the zero heading for debuggin, instead calculated heading")
     property('timeout_at_end_before_mark_end_reached','double',10)
+    property('final_heading','double').doc("defaults to unset, so not taken into account")
     property('step_width','double',2.0)
     runtime_states(:ALIGN_AT_END, :REACHED_END, :WAITING_FOR_POSE)
 
