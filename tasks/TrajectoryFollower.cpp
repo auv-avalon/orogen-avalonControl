@@ -52,7 +52,7 @@ void TrajectoryFollower::updateHook()
     std::pair<Eigen::Vector3d ,Eigen::Vector3d> p2 = spline.getPointAndTangent(p.first);
     Eigen::Vector3d next_point = p2.first;
     printf("first: %f, end: %f\n",p.first,spline.getEndParam());
-    if(fabs(p.first - spline.getEndParam()) < -0.001){
+    if(fabs(p.first - spline.getEndParam()) < 0.001){
         if(!endReached){
             endReachTime = rbs.time;
             endReached = true;
