@@ -65,6 +65,8 @@ void PositionControlTask::updateHook()
     if (time_step == 0){
         state(WAITING_FOR_VALID_ORIENTATION);
         return;
+    }else{
+        state(RUNNING);
     }
 
     last_pose = pose;
