@@ -79,6 +79,18 @@ void PositionControlTask::updateHook()
     }
     else
     	last_command_time = base::Time::now();
+    
+    
+    if(pose.cov_position(0,0) > _position_variance_threshold.get() || pose.cov_position(1,1) > _position_variance_threshold.get())
+    {
+      unstable_position = true;
+      state(POSITION_VARIANCE_TO_HIGH);
+    }
+    else
+    {
+      unstable_position = false;
+      state(RUNNING);
+    }
  
    
    //Get Delta position (aka error)
@@ -111,8 +123,17 @@ void PositionControlTask::updateHook()
         motion_command.heading = atan2(-pos_delta[1], -pos_delta[0]);
     }
     motion_command.z = last_command.z;//last_pose.position[2] - local_delta[2];// last_command.z;
-    motion_command.x_speed = xSpeed;
-    motion_command.y_speed = ySpeed;
+    
+    if(!unstable_position)
+    {
+      motion_command.x_speed = xSpeed;
+      motion_command.y_speed = ySpeed;
+    }
+    else
+    {
+      motion_command.x_speed = 0.0;
+      motion_command.y_speed = 0.0;
+    }
     _motion_commands.write(motion_command);
 
 

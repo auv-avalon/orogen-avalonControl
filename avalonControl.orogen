@@ -19,6 +19,10 @@ task_context 'PositionControlTask' do
     property('timeout', 'double', 1)
 
     property('optimal_heading_distance', 'double', 2.0)
+    
+    property('position_variance_threshold', 'double', 2.0).
+        doc('threshold for position variance; if position is unstable, the auv should not move!')
+    
     input_port('pose_samples', '/base/samples/RigidBodyState').
         doc("the current pose estimate")
 
@@ -28,7 +32,7 @@ task_context 'PositionControlTask' do
     output_port('motion_commands', '/base/AUVMotionCommand').
         doc("the output commands")
     
-    runtime_states :WAITING_FOR_ORIENTATION, :WAITING_FOR_COMMAND, :WAITING_FOR_VALID_ORIENTATION
+    runtime_states :WAITING_FOR_ORIENTATION, :WAITING_FOR_COMMAND, :WAITING_FOR_VALID_ORIENTATION, :POSITION_VARIANCE_TO_HIGH
 
     port_driven :pose_samples
 end

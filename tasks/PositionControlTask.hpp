@@ -98,6 +98,9 @@ private:
 	base::Time last_command_time;
 	/** Last received command */
 	base::AUVPositionCommand last_command;
+        
+        /** true, if the variance of the last position was to big */
+        bool unstable_position;
     };
 }
 
