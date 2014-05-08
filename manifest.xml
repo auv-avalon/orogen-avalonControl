@@ -10,6 +10,7 @@
   <depend package="drivers/orogen/hbridge"/>
   <depend package="avalon/orogen/avalon_base"/>
   <depend package="avalon/avalontools"/>
+  <depend package="image_processing/orogen/offshore_pipeline_detector"/>
   <tags>stable</tags>
 </package>
 

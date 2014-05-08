@@ -36,11 +36,28 @@ bool PositionControlTask::startHook()
     xPID->reset();
     yPID->reset();
     last_command_time = base::Time();
+    moving = true;
     return true;
 }
 
 void PositionControlTask::updateHook()
 {
+    
+   
+   if(_pipeline_samples.connected()){
+	controlData::Pipeline pipe;
+
+	if(_pipeline_samples.read(pipe,true))
+	{
+	   if(pipe.inspection_state == controlData::ALIGN_AUV || pipe.inspection_state == controlData::FOLLOW_PIPE )
+		moving = false;
+	}
+   }else
+   {
+	moving = true;
+   }
+
+
     xPID->updatePIDSettings(current_x_pid,   _x_pid.get());
     yPID->updatePIDSettings(current_y_pid,   _y_pid.get());
     
@@ -76,7 +93,7 @@ void PositionControlTask::updateHook()
     	if (last_command_time.isNull()){
             state(WAITING_FOR_COMMAND);
 	    return;
-    	}if ((base::Time::now() - last_command_time).toSeconds() > _timeout.get())
+    	}if (_timeout.get() > 0.0 && (base::Time::now() - last_command_time).toSeconds() > _timeout.get())
 	    return fatal();
     }
     else
@@ -126,7 +143,7 @@ void PositionControlTask::updateHook()
     }
     motion_command.z = last_command.z;//last_pose.position[2] - local_delta[2];// last_command.z;
     
-    if(!unstable_position)
+    if(!unstable_position && moving)
     {
       motion_command.x_speed = xSpeed;
       motion_command.y_speed = ySpeed;

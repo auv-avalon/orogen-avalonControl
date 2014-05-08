@@ -101,7 +101,8 @@ private:
         
         /** true, if the variance of the last position was to big */
         bool unstable_position;
-    };
+	bool moving;    
+};
 }
 
 #endif

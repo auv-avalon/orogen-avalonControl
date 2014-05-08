@@ -5,6 +5,7 @@ import_types_from "base"
 import_types_from "avalon_base"
 #import_types_from 'motcon_controller'
 import_types_from "hbridge"
+import_types_from "offshore_pipeline_detector"
 
 import_types_from "AvalonControl.hpp"
 type_export_policy :used
@@ -28,6 +29,8 @@ task_context 'PositionControlTask' do
 
     input_port('position_commands', '/base/AUVPositionCommand').
         doc("the input commands")
+
+    input_port('pipeline_samples', '/controlData/Pipeline')
 
     output_port('motion_commands', '/base/AUVMotionCommand').
         doc("the output commands")
