@@ -1,6 +1,6 @@
 #include "SpeedControlTask.hpp"
 
-#include <avalonmath.h>
+//#include <avalonmath.h>
 
 // Indentified values. Seee                                                                                                                                                        
 //   AUV10/experiments/20100609_controller_calibration                                                                                                                             

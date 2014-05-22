@@ -1,7 +1,7 @@
 #ifndef AVALON_CONTROL_HPP
 #define AVALON_CONTROL_HPP
 
-#include <pidcontroller.h>
+#include "tasks/pidcontroller.h"
 #include <base/time.h>
 
 namespace avalon_control

@@ -1,6 +1,5 @@
 #include "MotionControlTask.hpp"
 #include <base/commands/Joints.hpp>
-#include <avalonmath.h>
 #include <cmath>
 
 using namespace avalon_control;

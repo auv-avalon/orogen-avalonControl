@@ -2,15 +2,13 @@ name "avalon_control"
 version "0.1"
 
 import_types_from "base"
-import_types_from "avalon_base"
 #import_types_from 'motcon_controller'
 import_types_from "hbridge"
 import_types_from "offshore_pipeline_detector"
 
+import_types_from "tasks/pidcontroller.h"
 import_types_from "AvalonControl.hpp"
 type_export_policy :used
-
-using_library 'avalontools'
 
 task_context 'PositionControlTask' do
     property 'x_pid',   '/avalon_motor_controller/PIDSettings'
