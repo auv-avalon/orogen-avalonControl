@@ -163,6 +163,10 @@ void MotionControlTask::updateHook()
         middle_horizontal /= fabs(rear_horizontal);
         rear_horizontal   /= fabs(rear_horizontal);
     }
+    if(_dagon_mode.get()){
+       right =  rear_horizontal + right;
+       left =  rear_horizontal + left;
+    }
 
     // And finally convert all the values into the motcon commands
     base::actuators::Command hbridgeCommands;
@@ -213,14 +217,25 @@ void MotionControlTask::updateHook()
     
     hbridgeCommands.time = base::Time::now();
     _hbridge_commands.write(hbridgeCommands);
-    
-    base::commands::Joints jointCommands = base::commands::Joints::Raw(values);
+        
+    base::commands::Joints jointCommands;
+   
+    if(_dagon_mode.get()){
+        values.clear();
+        values.resize(5);
+        values[0] = middle_horizontal;
+        values[1] = left;
+        values[2] = right;
+        values[3] = rear_horizontal;
+        values[4] = rear_vertical;
+    }
+
+    jointCommands = base::commands::Joints::Raw(values);
     jointCommands.time = hbridgeCommands.time;
     
     if(_joint_names.get().size() == values.size()){
       jointCommands.names = _joint_names.get();
-    }
-    else{
+    }else{
       std::cerr << "Wrong number of joint names. " << values.size() << " names are needed." << std::endl;
     }
     

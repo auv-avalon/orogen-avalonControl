@@ -46,6 +46,8 @@ task_context 'MotionControlTask' do
     # for depth control to generate the corresponding part for the rear thruster
     property('z_coupling_factor', 'double', 0)
    
+    property('dagon_mode','/bool',false)
+
     input_port('dummy_feedback',"/base/actuators/Status")
 
     property('use_min_ground_distance', 'bool', true).
