@@ -13,7 +13,7 @@ namespace avalon_control {
     protected:
 	double last_ground_position;
         void sendStopCommand();
-    
+        bool dagon_mode;
         /** Current PID settings for the Z controller */
         avalon_motor_controller::PIDSettings current_z_pid;
         /** Current PID settings for the heading controller */

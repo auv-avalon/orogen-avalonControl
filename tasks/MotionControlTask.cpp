@@ -48,6 +48,8 @@ bool MotionControlTask::startHook()
     headingPID->reset();
     pitchPID->reset();
     last_command_time = base::Time();
+    dagon_mode = _dagon_mode.get() != 0;
+    printf("Dagon mode is: %s",dagon_mode?"enabled":"disabled");
     return true;
 }
 
@@ -140,8 +142,11 @@ void MotionControlTask::updateHook()
         current_heading += 2*M_PI;
 
     double middle_vertical = zPID->control(current_z, time_step);
+    double dive = middle_vertical;
     double rear_horizontal = headingPID->control(current_heading, time_step);
+    double turn_rate = rear_horizontal;
     double rear_vertical   = pitchPID->control(current_pitch, time_step);
+    double pitch = rear_vertical;
     double middle_horizontal = _y_factor.get() * last_command.y_speed; //pose.velocity.y();
     double left  = _x_factor.get() * last_command.x_speed;//pose.velocity.x();
     if (left < -1.0) left = -1.0;
@@ -163,7 +168,7 @@ void MotionControlTask::updateHook()
         middle_horizontal /= fabs(rear_horizontal);
         rear_horizontal   /= fabs(rear_horizontal);
     }
-    if(_dagon_mode.get()){
+    if(dagon_mode){
        right =  rear_horizontal + right;
        left =  rear_horizontal + left;
     }
@@ -192,8 +197,11 @@ void MotionControlTask::updateHook()
     values[LEFT]              = DIR_LEFT              * left;
     values[RIGHT]             = DIR_RIGHT             * right;
 
-    if(_cutoff.value().size() != 6){
-        std::cerr << "Warning sizes are invalid" << std::endl;
+
+    int cs = dagon_mode?5:6;
+    if(_cutoff.value().size() != cs){
+        std::cerr << "Cutoffsize is invalid: " << _cutoff.value().size() << std::endl;
+        error(CUTOFF_VECTOR_INVALID);
         return;
     }
     
@@ -220,14 +228,14 @@ void MotionControlTask::updateHook()
         
     base::commands::Joints jointCommands;
    
-    if(_dagon_mode.get()){
+    if(dagon_mode){
         values.clear();
         values.resize(5);
-        values[0] = middle_horizontal;
-        values[1] = left;
-        values[2] = right;
-        values[3] = rear_horizontal;
-        values[4] = rear_vertical;
+        values[0] = dive + pitch;
+        values[1] = _x_factor.get() * last_command.x_speed - turn_rate;
+        values[2] = _x_factor.get() * last_command.x_speed + turn_rate;
+        values[3] = dive-pitch;
+        values[4] = turn_rate + last_command.y_speed * _y_factor.get();
     }
 
     jointCommands = base::commands::Joints::Raw(values);
@@ -236,7 +244,8 @@ void MotionControlTask::updateHook()
     if(_joint_names.get().size() == values.size()){
       jointCommands.names = _joint_names.get();
     }else{
-      std::cerr << "Wrong number of joint names. " << values.size() << " names are needed." << std::endl;
+      std::cerr << "Wrong number of joint names. " << values.size() << " names are needed and got "<< _joint_names.get().size()  << std::endl;
+      error(JOINT_NAMES_INVALID);
     }
     
     _joint_commands.write(jointCommands);
@@ -267,9 +276,10 @@ void MotionControlTask::stopHook()
 
 void MotionControlTask::sendStopCommand(){
     base::actuators::Command hbridgeCommands;
-    hbridgeCommands.resize(6);
+    int cnt = dagon_mode?5:6; 
+    hbridgeCommands.resize(cnt);
     std::vector<float> values;
-    for(int i=0;i<6;i++){
+    for(int i=0;i<cnt;i++){
         hbridgeCommands.mode[i] = base::actuators::DM_PWM;
         hbridgeCommands.target[i] = 0;
         values.push_back(0);

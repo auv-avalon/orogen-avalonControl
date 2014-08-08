@@ -105,7 +105,7 @@ task_context 'MotionControlTask' do
 	
 	output_port('estimated_ground_pos', 'double')
 
-    error_states :TIMEOUT
+    error_states :TIMEOUT, :CUTOFF_VECTOR_INVALID, :JOINT_NAMES_INVALID
     runtime_states :WAITING_FOR_ORIENTATION, :WAITING_FOR_COMMAND
 
 #    port_driven :pose_samples
