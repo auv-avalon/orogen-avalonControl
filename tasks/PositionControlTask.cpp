@@ -43,7 +43,7 @@ bool PositionControlTask::startHook()
 void PositionControlTask::updateHook()
 {
     
-   
+  /* 
    if(_pipeline_samples.connected()){
 	controlData::Pipeline pipe;
 
@@ -56,6 +56,7 @@ void PositionControlTask::updateHook()
    {
 	moving = true;
    }
+   */
 
 
     xPID->updatePIDSettings(current_x_pid,   _x_pid.get());

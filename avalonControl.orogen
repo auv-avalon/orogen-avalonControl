@@ -4,10 +4,11 @@ version "0.1"
 import_types_from "base"
 #import_types_from 'motcon_controller'
 import_types_from "hbridge"
-import_types_from "offshore_pipeline_detector"
+#import_types_from "offshore_pipeline_detector"
 
 import_types_from "tasks/pidcontroller.h"
 import_types_from "AvalonControl.hpp"
+import_types_from "auv_control"
 type_export_policy :used
 
 task_context 'PositionControlTask' do
@@ -28,7 +29,7 @@ task_context 'PositionControlTask' do
     input_port('position_commands', '/base/AUVPositionCommand').
         doc("the input commands")
 
-    input_port('pipeline_samples', '/controlData/Pipeline')
+#    input_port('pipeline_samples', '/controlData/Pipeline')
 
     output_port('motion_commands', '/base/AUVMotionCommand').
         doc("the output commands")
@@ -146,6 +147,17 @@ task_context "TrajectoryFollower" do
     property('timeout_at_end_before_mark_end_reached','double',10)
     property('final_heading','double').doc("defaults to unset, so not taken into account")
     property('step_width','double',2.0)
+    property('geometrical_resolution','/double', 0.1)
+
+    #If the is not set, the next position is take either from step_with from the current location based,
+    #independat if the vehicle might jup on the spline. For calculation the NEXT position to the spline for the vehicle is taken
+    #if this is set, the value indicates the maximum-allowed jump-value on the spline. This means the spline is started at the beginning, and the allowed
+    #next position on the spline cannot be more far away than this property. The result will be that the vehicle follows the complete spline from beginning to end
+    #independant id another spoint of the spline is closer to the vehicle.
+    property('max_spline_jump_distance','double')
+    
+    output_port 'world_command', 'base::LinearAngular6DCommand'
+
     runtime_states(:ALIGN_AT_END, :REACHED_END, :WAITING_FOR_POSE)
 
     port_driven 
