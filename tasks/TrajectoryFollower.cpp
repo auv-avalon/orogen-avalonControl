@@ -39,23 +39,24 @@ bool TrajectoryFollower::startHook()
 {
     if (! TrajectoryFollowerBase::startHook())
         return false;
+    
+    spline = _trajectory.get().spline;
 
     endReached= false;
-    last_pos_on_spline=_trajectory.get().spline.getStartParam();
+    last_pos_on_spline=spline.getStartParam();
     return true;
 }
 void TrajectoryFollower::updateHook()
 {
     TrajectoryFollowerBase::updateHook();
     base::samples::RigidBodyState rbs;
-    if(_pose_samples.read(rbs) == RTT::NoData){
+    if(_pose_samples.readNewest(rbs,true) == RTT::NoData){
         //state(WAITING_FOR_POSE);
         return;
     }
     
     try{
 
-    base::geometry::Spline<3> spline = _trajectory.get().spline;
     double next_pos_on_spline = spline.findOneClosestPoint(rbs.position, _geometrical_resolution.get());
     _next_pos_on_spline.write(next_pos_on_spline); 
     _last_pos_on_spline.write(last_pos_on_spline);
@@ -127,6 +128,9 @@ void TrajectoryFollower::updateHook()
 
     }catch(std::runtime_error e){
             LOG_ERROR_S << "got runtime error " << e.what() << std::endl;
+            LOG_ERROR_S << "RBS position is: " << rbs.position[0] << " " << rbs.position[1] << " " << rbs.position[2] << std::endl;
+
+            LOG_ERROR_S << "Spline length is: " << spline.length(spline.getStartParam(),spline.getEndParam(), _geometrical_resolution.get()) << std::endl;
             error(CANNOT_FIND_CLOSED_POINT);
     }
 

@@ -25,6 +25,7 @@ namespace avalon_control {
     {
 	friend class TrajectoryFollowerBase;
     protected:
+        base::geometry::Spline<3> spline;
         base::Time endReachTime;
         bool endReached;
         double last_pos_on_spline;
