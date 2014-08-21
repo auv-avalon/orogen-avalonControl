@@ -1,6 +1,7 @@
 /* Generated from orogen/lib/orogen/templates/tasks/Task.cpp */
 
 #include "TrajectoryFollower.hpp"
+#include <base/Logging.hpp>
 
 using namespace avalon_control;
 
@@ -40,7 +41,7 @@ bool TrajectoryFollower::startHook()
         return false;
 
     endReached= false;
-    last_pos_on_spline=_geometrical_resolution.get(); //Small value after the start of the spline
+    last_pos_on_spline=_trajectory.get().spline.getStartParam();
     return true;
 }
 void TrajectoryFollower::updateHook()
@@ -52,6 +53,8 @@ void TrajectoryFollower::updateHook()
         return;
     }
     
+    try{
+
     base::geometry::Spline<3> spline = _trajectory.get().spline;
     double next_pos_on_spline = spline.findOneClosestPoint(rbs.position, _geometrical_resolution.get());
     _next_pos_on_spline.write(next_pos_on_spline); 
@@ -72,7 +75,6 @@ void TrajectoryFollower::updateHook()
         }
     }
     last_pos_on_spline = next_pos_on_spline;
-
     std::pair<double,double> p = spline.advance(next_pos_on_spline,_step_width.get(),_geometrical_resolution.get());
     std::pair<Eigen::Vector3d ,Eigen::Vector3d> p2 = spline.getPointAndTangent(p.first);
     Eigen::Vector3d next_point = p2.first;
@@ -105,6 +107,10 @@ void TrajectoryFollower::updateHook()
     _position_command.write(cmd);
     base::Waypoint wp(next_point,heading,0,0);
 
+    if(state() == CANNOT_FIND_CLOSED_POINT){
+        state(RUNNING);
+    }
+
     base::LinearAngular6DCommand world_cmd; 
     world_cmd.time = rbs.time;
     world_cmd.angular(0) = heading;
@@ -118,6 +124,11 @@ void TrajectoryFollower::updateHook()
 
 
     _next_position.write(wp);
+
+    }catch(std::runtime_error e){
+            LOG_ERROR_S << "got runtime error " << e.what() << std::endl;
+            error(CANNOT_FIND_CLOSED_POINT);
+    }
 
     
 }
