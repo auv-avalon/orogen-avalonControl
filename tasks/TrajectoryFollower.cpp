@@ -63,9 +63,7 @@ void TrajectoryFollower::updateHook()
             //We are to far away from the spline, recovering to spline
             //Also possible if the spline is overlapping
             next_pos_on_spline = last_pos_on_spline;    
-            printf("Reverting pos\n");
         }else{
-            printf("accepting pos\n");
         }
     }
     if(_deny_reverse.get()){
