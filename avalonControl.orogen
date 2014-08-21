@@ -164,8 +164,7 @@ task_context "TrajectoryFollower" do
 
     output_port 'world_command', 'base::LinearAngular6DCommand'
 
-    runtime_states(:ALIGN_AT_END, :REACHED_END, :WAITING_FOR_POSE)
-    error_states(:CANNOT_FIND_CLOSED_POINT)
+    runtime_states(:ALIGN_AT_END, :REACHED_END, :WAITING_FOR_POSE, :CANNOT_FIND_CLOSED_POINT)
 
     port_driven 
 end

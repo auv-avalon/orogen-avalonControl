@@ -109,7 +109,7 @@ void TrajectoryFollower::updateHook()
     base::Waypoint wp(next_point,heading,0,0);
 
     if(state() == CANNOT_FIND_CLOSED_POINT){
-        state(RUNNING);
+        recover();
     }
 
     base::LinearAngular6DCommand world_cmd; 
@@ -129,9 +129,8 @@ void TrajectoryFollower::updateHook()
     }catch(std::runtime_error e){
             LOG_ERROR_S << "got runtime error " << e.what() << std::endl;
             LOG_ERROR_S << "RBS position is: " << rbs.position[0] << " " << rbs.position[1] << " " << rbs.position[2] << std::endl;
-
             LOG_ERROR_S << "Spline length is: " << spline.length(spline.getStartParam(),spline.getEndParam(), _geometrical_resolution.get()) << std::endl;
-            error(CANNOT_FIND_CLOSED_POINT);
+            state(CANNOT_FIND_CLOSED_POINT);
     }
 
     
