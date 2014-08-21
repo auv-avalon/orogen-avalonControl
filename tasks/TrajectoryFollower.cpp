@@ -113,9 +113,9 @@ void TrajectoryFollower::updateHook()
 
     base::LinearAngular6DCommand world_cmd; 
     world_cmd.time = rbs.time;
-    world_cmd.angular(0) = heading;
+    world_cmd.angular(0) = 0;
     world_cmd.angular(1) = 0;
-    world_cmd.angular(2) = 0;
+    world_cmd.angular(2) = heading;
     
     world_cmd.linear(0) = next_point[0]; 
     world_cmd.linear(1) = next_point[1];
