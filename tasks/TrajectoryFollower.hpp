@@ -27,7 +27,7 @@ namespace avalon_control {
     protected:
         base::Time endReachTime;
         bool endReached;
-        bool last_pos_on_spline;
+        double last_pos_on_spline;
     public:
         /** TaskContext constructor for TrajectoryFollower
          * \param name Name of the task. This name needs to be unique to make it identifiable via nameservices.

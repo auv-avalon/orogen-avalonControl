@@ -143,6 +143,8 @@ task_context "TrajectoryFollower" do
     property("trajectory", "/base/Trajectory") 
 
 
+    #Deny reverse jump on a trajectory locally, to prevent influence of swining controllers on small step sizes
+    property('deny_reverse','bool',true)
     property('use_zero_heading','bool',false).doc("use the zero heading for debuggin, instead calculated heading")
     property('timeout_at_end_before_mark_end_reached','double',10)
     property('final_heading','double').doc("defaults to unset, so not taken into account")
@@ -155,7 +157,11 @@ task_context "TrajectoryFollower" do
     #next position on the spline cannot be more far away than this property. The result will be that the vehicle follows the complete spline from beginning to end
     #independant id another spoint of the spline is closer to the vehicle.
     property('max_spline_jump_distance','double')
-    
+   
+    output_port 'next_pos_on_spline', '/double' 
+    output_port 'last_pos_on_spline', '/double' 
+    output_port 'segment_dist', '/double' 
+
     output_port 'world_command', 'base::LinearAngular6DCommand'
 
     runtime_states(:ALIGN_AT_END, :REACHED_END, :WAITING_FOR_POSE)

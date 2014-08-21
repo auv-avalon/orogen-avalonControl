@@ -40,7 +40,7 @@ bool TrajectoryFollower::startHook()
         return false;
 
     endReached= false;
-    last_pos_on_spline=0;
+    last_pos_on_spline=_geometrical_resolution.get(); //Small value after the start of the spline
     return true;
 }
 void TrajectoryFollower::updateHook()
@@ -54,17 +54,28 @@ void TrajectoryFollower::updateHook()
     
     base::geometry::Spline<3> spline = _trajectory.get().spline;
     double next_pos_on_spline = spline.findOneClosestPoint(rbs.position, _geometrical_resolution.get());
-
+    _next_pos_on_spline.write(next_pos_on_spline); 
+    _last_pos_on_spline.write(last_pos_on_spline);
     if(!base::isUnset<double>(_max_spline_jump_distance.get())){
-        if( _max_spline_jump_distance.get() < spline.length(last_pos_on_spline, next_pos_on_spline,_geometrical_resolution.get())){
+        double dist = spline.length(last_pos_on_spline, next_pos_on_spline,_geometrical_resolution.get());
+        _segment_dist.write(dist);
+        if( _max_spline_jump_distance.get() < dist){
             //We are to far away from the spline, recovering to spline
             //Also possible if the spline is overlapping
             next_pos_on_spline = last_pos_on_spline;    
+            printf("Reverting pos\n");
+        }else{
+            printf("accepting pos\n");
+        }
+    }
+    if(_deny_reverse.get()){
+        if(next_pos_on_spline < last_pos_on_spline){
+            next_pos_on_spline = last_pos_on_spline;
         }
     }
     last_pos_on_spline = next_pos_on_spline;
 
-    std::pair<double,double> p = spline.advance(spline.findOneClosestPoint(rbs.position, _geometrical_resolution.get()),_step_width.get(),_geometrical_resolution.get());
+    std::pair<double,double> p = spline.advance(next_pos_on_spline,_step_width.get(),_geometrical_resolution.get());
     std::pair<Eigen::Vector3d ,Eigen::Vector3d> p2 = spline.getPointAndTangent(p.first);
     Eigen::Vector3d next_point = p2.first;
     //printf("first: %f, end: %f\n",p.first,spline.getEndParam());
