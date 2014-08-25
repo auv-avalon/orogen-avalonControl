@@ -190,7 +190,7 @@ void MotionControlTask::updateHook()
     left              = correct_pwm_value(left, 0.14);
     right             = correct_pwm_value(right, 0.14);
     std::vector<float> values(6);
-    values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * middle_vertical;
+    values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * -middle_vertical;
     values[MIDDLE_HORIZONTAL] = DIR_MIDDLE_HORIZONTAL * middle_horizontal;
     values[REAR_VERTICAL]     = DIR_REAR_VERTICAL     * rear_vertical;
     values[REAR_HORIZONTAL]   = DIR_REAR_HORIZONTAL   * rear_horizontal;
@@ -232,8 +232,8 @@ void MotionControlTask::updateHook()
         values.clear();
         values.resize(5);
         values[0] = dive + pitch;
-        values[1] = _x_factor.get() * last_command.x_speed - turn_rate;
-        values[2] = _x_factor.get() * last_command.x_speed + turn_rate;
+        values[1] = _x_factor.get() * last_command.x_speed - turn_rate +  last_command.y_speed * _turn_coupling_factor.get();
+        values[2] = _x_factor.get() * last_command.x_speed + turn_rate - last_command.y_speed * _turn_coupling_factor.get() ;
         values[3] = dive-pitch;
         values[4] = turn_rate + last_command.y_speed * _y_factor.get();
     }

@@ -88,6 +88,9 @@ task_context 'MotionControlTask' do
     property('joint_names', 'std/vector<string>').
 	doc("Names of the thruster-joints")
 
+    #Only for dagon
+    propert('turn_coupling_factor',"double")
+
     input_port('pose_samples', '/base/samples/RigidBodyState').
         doc("the current pose estimate")
 
