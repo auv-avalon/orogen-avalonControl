@@ -83,7 +83,10 @@ void PositionControlTask::updateHook()
     if (time_step == 0){
         state(WAITING_FOR_VALID_ORIENTATION);
         return;
-    }else{
+    }
+
+    //WE are valid here
+    if(state != RUNNING){
         state(RUNNING);
     }
 
