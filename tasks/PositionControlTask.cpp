@@ -86,7 +86,7 @@ void PositionControlTask::updateHook()
     }
 
     //WE are valid here
-    if(state != RUNNING){
+    if(state() != RUNNING){
         state(RUNNING);
     }
 
