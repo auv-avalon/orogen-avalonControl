@@ -190,7 +190,7 @@ void MotionControlTask::updateHook()
     left              = correct_pwm_value(left, 0.14);
     right             = correct_pwm_value(right, 0.14);
     std::vector<float> values(6);
-    values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * -middle_vertical;
+    values[MIDDLE_VERTICAL]   = DIR_MIDDLE_VERTICAL   * middle_vertical;
     values[MIDDLE_HORIZONTAL] = DIR_MIDDLE_HORIZONTAL * middle_horizontal;
     values[REAR_VERTICAL]     = DIR_REAR_VERTICAL     * rear_vertical;
     values[REAR_HORIZONTAL]   = DIR_REAR_HORIZONTAL   * rear_horizontal;
