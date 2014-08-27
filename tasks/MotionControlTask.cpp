@@ -194,8 +194,8 @@ void MotionControlTask::updateHook()
     values[MIDDLE_HORIZONTAL] = DIR_MIDDLE_HORIZONTAL * middle_horizontal;
     values[REAR_VERTICAL]     = DIR_REAR_VERTICAL     * rear_vertical;
     values[REAR_HORIZONTAL]   = DIR_REAR_HORIZONTAL   * rear_horizontal;
-    values[LEFT]              = DIR_LEFT              * left;
-    values[RIGHT]             = DIR_RIGHT             * right;
+    values[LEFT]              = -DIR_LEFT              * left;
+    values[RIGHT]             = -DIR_RIGHT             * right;
 
 
     int cs = dagon_mode?5:6;
