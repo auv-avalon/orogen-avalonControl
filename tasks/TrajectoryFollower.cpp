@@ -95,6 +95,12 @@ void TrajectoryFollower::updateHook()
         }
         if((rbs.time - endReachTime).toSeconds() >  _timeout_at_end_before_mark_end_reached.get()){
             state(REACHED_END);
+
+            //Start spline from beginning, if required
+            if(_loop_spline.get()){
+                endReached= false;
+                last_pos_on_spline=spline.getStartParam();
+            }
         }
         if(!base::isUnset<double>(_final_heading.get())){
             heading = _final_heading.get();
