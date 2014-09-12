@@ -78,8 +78,21 @@ void TrajectoryFollower::updateHook()
     last_pos_on_spline = next_pos_on_spline;
     std::pair<double,double> p = spline.advance(next_pos_on_spline,_step_width.get(),_geometrical_resolution.get());
     std::pair<Eigen::Vector3d ,Eigen::Vector3d> p2 = spline.getPointAndTangent(p.first);
-    Eigen::Vector3d next_point = p2.first;
-    //printf("first: %f, end: %f\n",p.first,spline.getEndParam());
+   
+    //Calculate the direction vector
+    Eigen::Vector3d target_vector = p2.first - rbs.position; 
+    //If speed is one, it equals p2.first
+    Eigen::Vector3d next_point = rbs.position + (target_vector *  _trajectory.get().speed); 
+    //Reset depth to target depth, depth control is handled perfectly, we want only to incluence the world x,y speed
+    next_point[2] = p2.first[2];
+
+
+    /*    
+    printf("Direction %f,%f,%f \n",target_vector[0],target_vector[1],target_vector[2]);
+    printf("Test %f,%f,%f \n",test[0],test[1],test[2]);
+    printf("Second %f,%f,%f \n",next_point[0],next_point[1],next_point[2]);
+    */
+
     base::AUVPositionCommand cmd;
     cmd.x = next_point[0];
     cmd.y = next_point[1];
