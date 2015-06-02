@@ -2,6 +2,7 @@
 
 #include "TrajectoryFollower.hpp"
 #include <base/Logging.hpp>
+#include <base/commands/AUVPosition.hpp>
 
 using namespace avalon_control;
 
@@ -93,7 +94,7 @@ void TrajectoryFollower::updateHook()
     printf("Second %f,%f,%f \n",next_point[0],next_point[1],next_point[2]);
     */
 
-    base::AUVPositionCommand cmd;
+    base::commands::AUVPosition cmd;
     cmd.x = next_point[0];
     cmd.y = next_point[1];
     cmd.z = next_point[2];

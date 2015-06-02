@@ -4,6 +4,7 @@
 #define AVALON_CONTROL_FAKEWRITER_TASK_HPP
 
 #include "avalon_control/FakeWriterBase.hpp"
+#include <base/commands/AUVMotion.hpp>
 
 namespace avalon_control {
 
@@ -25,7 +26,7 @@ namespace avalon_control {
     {
 	friend class FakeWriterBase;
     protected:
-	base::AUVMotionCommand lastCommand;
+	base::commands::AUVMotion lastCommand;
 
         /* Dynamic Property setter of heading
          */

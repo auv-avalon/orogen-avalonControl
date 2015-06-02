@@ -34,7 +34,7 @@ namespace avalon_control {
 	/** Time of the last received command */
 	base::Time last_command_time;
 	/** Last received command */
-	base::AUVMotionCommand last_command;
+	base::commands::AUVMotion last_command;
 
     public:
         MotionControlTask(std::string const& name = "avalon_control::MotionControlTask", TaskCore::TaskState initial_state = Stopped);

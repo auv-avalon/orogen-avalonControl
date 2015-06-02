@@ -1,6 +1,7 @@
 #include "MotionControlTask.hpp"
 #include <base/commands/Joints.hpp>
 #include <cmath>
+#include <base/commands/AUVMotion.hpp>
 
 using namespace avalon_control;
 
@@ -89,7 +90,7 @@ void MotionControlTask::updateHook()
 
     last_pose = pose;
 
-    base::AUVMotionCommand new_command;
+    base::commands::AUVMotion new_command;
     if(_motion_commands.readNewest(new_command) == RTT::NewData)
     {
     	last_command = new_command;

@@ -2,7 +2,8 @@
 #define AVALON_CONTROL_POSITIONCONTROLTASK_TASK_HPP
 
 #include "avalon_control/PositionControlTaskBase.hpp"
-
+#include <base/commands/AUVPosition.hpp>
+#include <base/samples/RigidBodyState.hpp>
 
 namespace avalon_control {
     class PositionControlTask : public PositionControlTaskBase
@@ -97,7 +98,7 @@ private:
 	/** Time of the last received command */
 	base::Time last_command_time;
 	/** Last received command */
-	base::AUVPositionCommand last_command;
+	base::commands::AUVPosition last_command;
         
         /** true, if the variance of the last position was to big */
         bool unstable_position;

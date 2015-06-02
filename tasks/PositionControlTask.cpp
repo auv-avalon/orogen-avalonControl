@@ -1,5 +1,5 @@
 #include "PositionControlTask.hpp"
-
+#include <base/commands/AUVMotion.hpp>
 
 using namespace avalon_control;
 
@@ -139,7 +139,7 @@ void PositionControlTask::updateHook()
     printf("Delta Values: %1.3f,%1.3f,%1.3f ",local_delta[0],local_delta[1],local_delta[2]);
     printf("Speed: %1.3f,%1.3f     \r",xSpeed,ySpeed);
 
-    base::AUVMotionCommand motion_command;
+    base::commands::AUVMotion motion_command;
     if(pos_delta.norm() < _optimal_heading_distance.get()){
         motion_command.heading = last_command.heading;
     } else {

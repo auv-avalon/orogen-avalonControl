@@ -4,6 +4,7 @@
 #define AVALON_CONTROL_RELFAKEWRITER_TASK_HPP
 
 #include "avalon_control/RelFakeWriterBase.hpp"
+#include <base/commands/AUVPosition.hpp>
 
 namespace avalon_control {
 
@@ -25,7 +26,7 @@ namespace avalon_control {
     {
 	friend class RelFakeWriterBase;
     protected:
-	base::AUVPositionCommand lastCommand;
+	base::commands::AUVPosition lastCommand;
 
         /* Dynamic Property setter of heading
          */
